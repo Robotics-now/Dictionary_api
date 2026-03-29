@@ -1,275 +1,1019 @@
 <!DOCTYPE html>
 <html class="light" lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Lexical Architect | Precision Dictionary API</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#3525cd",
-                        "on-primary": "#ffffff",
-                        "surface": "#faf8ff",
-                        "on-surface": "#131b2e",
-                        "on-surface-variant": "#464555",
-                        "outline-variant": "#c7c4d8",
-                        "surface-container-low": "#f2f3ff",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container-high": "#e2e7ff",
-                        "surface-container-highest": "#dae2fd",
-                        "error-container": "#ffdad6",
-                        "error": "#ba1a1a"
-                    },
-                    fontFamily: {
-                        "headline": ["Space Grotesk"],
-                        "body": ["Inter"],
-                        "mono": ["JetBrains Mono"]
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        html { scroll-behavior: smooth; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        #toast {
-            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
-            background: #283044; color: #fff; padding: .75rem 1.5rem; border-radius: 9999px;
-            font-size: .875rem; z-index: 9999; transition: all .4s cubic-bezier(.34,1.56,.64,1); opacity: 0;
-        }
-        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-        .live-badge { animation: pulse 1.8s ease infinite; }
-        .chip { padding: .375rem .875rem; background: #eaedff; color: #3525cd; border-radius: 9999px; font-size: .8rem; font-family: 'JetBrains Mono'; border: 1px solid #c7c4d8; transition: all .2s; cursor: pointer; }
-        .chip:hover { background: #dae2fd; transform: translateY(-1px); }
-    </style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OPEN API | Precision Dictionary API</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-secondary-fixed-variant": "#3a485c",
+          "on-primary-container":       "#dad7ff",
+          "primary-fixed":              "#e2dfff",
+          "on-secondary-fixed":         "#0d1c2f",
+          "error-container":            "#ffdad6",
+          "inverse-primary":            "#c3c0ff",
+          "primary-container":          "#4f46e5",
+          "tertiary-container":         "#006693",
+          "on-primary-fixed-variant":   "#3323cc",
+          "surface":                    "#faf8ff",
+          "on-tertiary-fixed":          "#001e2f",
+          "surface-container-low":      "#f2f3ff",
+          "background":                 "#faf8ff",
+          "surface-container-highest":  "#dae2fd",
+          "on-primary":                 "#ffffff",
+          "inverse-on-surface":         "#eef0ff",
+          "primary":                    "#3525cd",
+          "tertiary":                   "#004d70",
+          "surface-container-high":     "#e2e7ff",
+          "outline":                    "#777587",
+          "surface-tint":               "#4d44e3",
+          "surface-variant":            "#dae2fd",
+          "on-primary-fixed":           "#0f0069",
+          "error":                      "#ba1a1a",
+          "surface-bright":             "#faf8ff",
+          "surface-dim":                "#d2d9f4",
+          "on-surface":                 "#131b2e",
+          "secondary-fixed":            "#d5e3fd",
+          "on-tertiary-fixed-variant":  "#004c6e",
+          "surface-container":          "#eaedff",
+          "surface-container-lowest":   "#ffffff",
+          "outline-variant":            "#c7c4d8",
+          "primary-fixed-dim":          "#c3c0ff",
+          "on-secondary-container":     "#57657b",
+          "on-error":                   "#ffffff",
+          "tertiary-fixed":             "#c9e6ff",
+          "tertiary-fixed-dim":         "#89ceff",
+          "secondary-fixed-dim":        "#b9c7e0",
+          "secondary":                  "#515f74",
+          "on-error-container":         "#93000a",
+          "on-background":              "#131b2e",
+          "secondary-container":        "#d5e3fd",
+          "on-tertiary-container":      "#b8e0ff",
+          "on-secondary":               "#ffffff",
+          "on-surface-variant":         "#464555",
+          "inverse-surface":            "#283044",
+          "on-tertiary":                "#ffffff"
+        },
+        fontFamily: {
+          "headline": ["Space Grotesk"],
+          "body":     ["Inter"],
+          "label":    ["Inter"],
+          "mono":     ["JetBrains Mono"]
+        },
+        borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+      },
+    },
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* ── Nav active state ── */
+  .nav-link.active { color: #3525cd; border-bottom: 2px solid #3525cd; font-weight: 700; }
+
+  /* ── Mobile menu ── */
+  #mobile-menu { max-height: 0; overflow: hidden; transition: max-height .35s ease, opacity .3s ease; opacity: 0; }
+  #mobile-menu.open { max-height: 320px; opacity: 1; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #283044; color: #fff;
+    padding: .75rem 1.5rem; border-radius: 9999px;
+    font-size: .875rem; font-family: 'Inter', sans-serif; font-weight: 500;
+    z-index: 9999; transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+    opacity: 0; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── Back to top ── */
+  #back-to-top {
+    position: fixed; bottom: 2rem; right: 2rem;
+    width: 44px; height: 44px; background: #3525cd; color: #fff;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 999; opacity: 0; transform: translateY(20px);
+    transition: opacity .3s ease, transform .3s ease; border: none;
+    box-shadow: 0 4px 16px rgba(53,37,205,.35);
+  }
+  #back-to-top.visible { opacity: 1; transform: translateY(0); }
+  #back-to-top:hover { background: #4f46e5; }
+
+  /* ── Result card slide-up ── */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .result-animate { animation: slideUp .35s ease forwards; }
+
+  /* ── Spinner ── */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 20px; height: 20px; border: 2px solid #e2dfff;
+    border-top-color: #3525cd; border-radius: 50%;
+    animation: spin .6s linear infinite; display: inline-block;
+  }
+
+  /* ── Search focus ── */
+  #search-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(53,37,205,.25); }
+
+  /* ── Live badge pulse ── */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .live-badge { animation: pulse 1.8s ease infinite; }
+
+  /* ── GitHub Star button ── */
+  .star-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    background: #24292f; color: #fff;
+    border-radius: 9999px;
+    font-size: 0.78rem; font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    border: 1.5px solid #444c56;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    white-space: nowrap;
+  }
+  .star-btn:hover  { background: #2d333b; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.22); }
+  .star-btn:active { transform: scale(0.96); }
+  .star-btn .star-icon { color: #f1c40f; font-size: 1rem; transition: transform 0.2s; }
+  .star-btn:hover .star-icon { transform: scale(1.25) rotate(-8deg); }
+
+  /* starred pulse */
+  @keyframes starPop { 0%{transform:scale(1)} 40%{transform:scale(1.5)} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
+  .star-btn.starred .star-icon { animation: starPop 0.45s ease; color: #f1c40f; }
+  .star-btn.starred { background: #2d333b; border-color: #f1c40f55; }
+
+  /* floating star badge */
+  #float-star {
+    position: fixed; top: 50%; right: 0;
+    transform: translateY(-50%) translateX(110%);
+    z-index: 900;
+    transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  #float-star.visible { transform: translateY(-50%) translateX(0); }
+  #float-star-inner {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: #24292f; color: #fff; border-radius: 14px 0 0 14px;
+    padding: 14px 10px; border: 1.5px solid #444c56; border-right: none;
+    cursor: pointer; box-shadow: -4px 0 20px rgba(0,0,0,0.2);
+    transition: background 0.18s;
+  }
+  #float-star-inner:hover { background: #2d333b; }
+  #float-star-inner .star-icon { font-size: 1.4rem; color: #f1c40f; }
+  #float-star-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; writing-mode: vertical-lr; }
+
+  /* ── Quick-try chips ── */
+  .chip {
+    padding: .375rem .875rem;
+    background: #eaedff; color: #3525cd;
+    border-radius: 9999px; font-size: .8rem;
+    font-family: 'JetBrains Mono', monospace; font-weight: 500;
+    border: 1px solid #c7c4d8;
+    transition: background .2s, transform .15s; cursor: pointer;
+  }
+  .chip:hover { background: #dae2fd; transform: translateY(-1px); }
+  .chip:active { transform: scale(.96); }
+
+  /* ── API Key Modal ── */
+  #key-modal          { display: none; }
+  #key-modal.open     { display: flex; }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.93) translateY(14px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+  }
+  #key-modal.open .modal-panel { animation: modalIn .35s cubic-bezier(.34,1.56,.64,1) both; }
+
+  /* loading spinner inside button */
+  @keyframes btnSpin { to { transform: rotate(360deg); } }
+  .btn-spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: btnSpin .55s linear infinite;
+    display: inline-block; flex-shrink: 0;
+  }
+
+  /* input shake on error */
+  @keyframes shake {
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px); }
+    60%{ transform:translateX(6px); }
+    80%{ transform:translateX(-3px); }
+  }
+  .shake { animation: shake .35s ease; }
+</style>
 </head>
 <body class="bg-surface text-on-surface">
 
+<!-- Toast -->
 <div id="toast"></div>
 
+<!-- Back to top -->
+<button id="back-to-top" title="Back to top" onclick="scrollToSection('hero')">
+  <span class="material-symbols-outlined" style="font-size:20px;">arrow_upward</span>
+</button>
+
+<!-- Floating Star Badge (slides in after scroll) -->
+<div id="float-star">
+  <div id="float-star-inner" onclick="starRepo()" title="Star on GitHub">
+    <span class="material-symbols-outlined star-icon" id="float-star-icon" style="font-variation-settings:'FILL' 1;">star</span>
+    <span id="float-star-label">STAR</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
 <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100/60">
-    <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-        <a href="/" class="text-xl font-bold tracking-tighter text-slate-900 font-headline">Lexical Architect</a>
-        <div class="hidden md:flex items-center space-x-8">
-            <a href="#register-section" class="text-slate-600 hover:text-primary text-sm font-medium transition-colors">Get API Key</a>
-            <a href="#search-section" class="text-slate-600 hover:text-primary text-sm font-medium transition-colors">Try It</a>
-            <a href="#api-docs" class="text-slate-600 hover:text-primary text-sm font-medium transition-colors">Docs</a>
-        </div>
-        <button onclick="scrollToSection('register-section')" class="px-5 py-2 bg-primary text-on-primary rounded-md text-sm font-medium hover:opacity-90 transition-all">
-            Join Now
-        </button>
+  <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+    <button onclick="scrollToSection('hero')"
+      class="text-xl font-bold tracking-tighter text-slate-900 font-['Space_Grotesk'] hover:opacity-80 transition-opacity">
+      OPEN API
+    </button>
+
+    <div class="hidden md:flex items-center space-x-8">
+      <button onclick="scrollToSection('search-section'); setActiveNav(this)"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Try It</button>
+      <button onclick="scrollToSection('features'); setActiveNav(this)"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Features</button>
+      <button onclick="scrollToSection('api-docs'); setActiveNav(this)"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Docs</button>
+      <button onclick="scrollToSection('cta'); setActiveNav(this)"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Pricing</button>
     </div>
+
+    <div class="flex items-center gap-3">
+      <!-- GitHub Star button in nav -->
+      <a href="https://github.com/Robotics-now/Dictionary_api"
+         target="_blank" rel="noopener noreferrer"
+         onclick="starRepo(event)"
+         class="star-btn hidden md:inline-flex" id="nav-star-btn">
+        <span class="material-symbols-outlined star-icon" style="font-variation-settings:'FILL' 1; font-size:1rem;">star</span>
+        <span id="nav-star-label">Star</span>
+        <span class="opacity-40">|</span>
+        <svg height="14" viewBox="0 0 16 16" fill="currentColor" class="opacity-70"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <button onclick="scrollToSection('search-section')"
+        class="hidden md:block px-5 py-2 bg-primary text-on-primary rounded-md text-sm font-medium hover:opacity-90 transition-all active:scale-95">
+        Get Started
+      </button>
+      <button id="menu-btn" onclick="toggleMobileMenu()"
+        class="p-2 text-slate-600 hover:bg-slate-100/50 rounded-lg transition-colors">
+        <span class="material-symbols-outlined" id="menu-icon">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <div id="mobile-menu" class="bg-white/95 backdrop-blur-xl border-t border-slate-100/60 px-6">
+    <div class="flex flex-col py-4 space-y-1 max-w-7xl mx-auto">
+      <button onclick="scrollToSection('search-section'); closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Try It</button>
+      <button onclick="scrollToSection('features'); closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Features</button>
+      <button onclick="scrollToSection('api-docs'); closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Docs</button>
+      <button onclick="scrollToSection('cta'); closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Pricing</button>
+      <div class="pt-2 border-t border-slate-100">
+        <button onclick="scrollToSection('search-section'); closeMobileMenu()"
+          class="w-full mt-2 px-5 py-3 bg-primary text-on-primary rounded-md text-sm font-semibold hover:opacity-90 transition-all">
+          Get Started
+        </button>
+      </div>
+    </div>
+  </div>
 </nav>
 
 <main class="pt-24">
-    <!-- Hero -->
-    <section id="hero" class="relative px-6 py-20 lg:py-32">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div class="lg:col-span-7">
-                <h1 class="text-6xl md:text-8xl font-bold font-headline tracking-tighter leading-[0.9] mb-8">
-                    A Precise <span class="text-primary italic">Dictionary</span> API
-                </h1>
-                <p class="text-xl text-on-surface-variant max-w-xl leading-relaxed mb-10">
-                    Verify words, fetch definitions, and build language tools with our high-speed endpoint. Request your free API key to start building.
-                </p>
-                <div class="flex flex-wrap gap-4">
-                    <button onclick="scrollToSection('register-section')" class="px-8 py-4 bg-primary text-on-primary rounded-md font-semibold text-lg hover:shadow-lg transition-all active:scale-95">
-                        Get My Free Key
-                    </button>
-                    <button onclick="scrollToSection('search-section')" class="px-8 py-4 bg-surface-container-high text-primary rounded-md font-semibold text-lg hover:bg-surface-container-highest transition-all">
-                        Try Demo
-                    </button>
-                </div>
-            </div>
-            <div class="lg:col-span-5">
-                <div class="bg-white p-8 rounded-2xl shadow-xl border border-outline-variant/20">
-                    <div class="text-primary font-mono text-xs mb-4">API RESPONSE</div>
-                    <div class="space-y-3">
-                        <div class="h-2 w-24 bg-slate-100 rounded"></div>
-                        <div class="text-4xl font-headline font-bold">developer</div>
-                        <div class="text-primary italic font-body">noun</div>
-                        <p class="text-on-surface-variant text-sm">A person that creates computer software or applications.</p>
-                    </div>
-                </div>
-            </div>
+
+  <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+  <section id="hero" class="relative px-6 py-24 md:py-32 overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7">
+        <h1 class="text-6xl md:text-8xl font-bold font-headline tracking-tighter text-on-surface leading-[0.9] mb-8">
+          A Precise <span class="text-primary italic">Dictionary</span> API for Your Apps
+        </h1>
+        <p class="text-xl text-on-surface-variant max-w-xl leading-relaxed font-body mb-10">
+          The definitive linguistic engine for developers. High-fidelity definitions, phonetic precision, and global thesaurus support delivered via a low-latency global edge network.
+        </p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <button onclick="scrollToSection('search-section')"
+            class="px-8 py-4 bg-primary text-on-primary rounded-md font-semibold text-lg hover:bg-primary/90 transition-all active:scale-95">
+            Start Building Now
+          </button>
+          <button onclick="scrollToSection('api-docs')"
+            class="px-8 py-4 bg-surface-container-high text-primary rounded-md font-semibold text-lg hover:bg-surface-container-highest transition-all active:scale-95">
+            View Documentation
+          </button>
+          <!-- Hero GitHub Star -->
+          <a href="https://github.com/Robotics-now/Dictionary_api"
+             target="_blank" rel="noopener noreferrer"
+             onclick="starRepo(event)"
+             class="star-btn text-base px-5 py-3.5" id="hero-star-btn">
+            <span class="material-symbols-outlined star-icon" style="font-variation-settings:'FILL' 1; font-size:1.2rem;">star</span>
+            <span id="hero-star-label">Star on GitHub</span>
+            <svg height="16" viewBox="0 0 16 16" fill="currentColor" class="opacity-60 ml-0.5"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
         </div>
-    </section>
+      </div>
 
-    <!-- Registration Section -->
-    <section id="register-section" class="py-24 px-6 bg-primary text-on-primary">
-        <div class="max-w-3xl mx-auto text-center">
-            <h2 class="text-4xl md:text-5xl font-headline font-bold mb-6">Request Your API Access</h2>
-            <p class="text-indigo-100 mb-10 text-lg">Enter your email below. We'll generate a unique API key and send it straight to your inbox.</p>
-            
-            <form onsubmit="handleRegister(event)" class="flex flex-col md:flex-row gap-3">
-                <input id="reg-email" type="email" required placeholder="name@company.com" 
-                    class="flex-1 px-6 py-4 rounded-xl text-on-surface border-none focus:ring-4 focus:ring-white/20 text-lg">
-                <button id="reg-btn" type="submit" 
-                    class="px-8 py-4 bg-white text-primary rounded-xl font-bold text-lg hover:bg-indigo-50 transition-all flex items-center justify-center gap-2">
-                    <span id="reg-btn-text">Generate Key</span>
-                    <span id="reg-spinner" class="hidden animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full"></span>
-                </button>
-            </form>
-            <p class="mt-4 text-xs text-indigo-200 opacity-70 italic">By clicking generate, you agree to receive your key via email.</p>
+      <div class="lg:col-span-5 relative">
+        <div class="absolute -z-10 top-0 left-0 w-full h-full bg-gradient-to-tr from-primary/10 to-transparent blur-3xl rounded-full"></div>
+        <div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant/15">
+          <div class="flex gap-2 mb-6">
+            <div class="w-3 h-3 rounded-full bg-error/40"></div>
+            <div class="w-3 h-3 rounded-full bg-primary/40"></div>
+            <div class="w-3 h-3 rounded-full bg-surface-container-highest"></div>
+          </div>
+          <div class="space-y-4">
+            <div class="text-primary font-mono text-sm">GET /api/open</div>
+            <div class="text-secondary text-5xl font-headline">open api</div>
+            <div class="text-primary text-2xl font-headline">/ˈleksɪk(ə)l/</div>
+            <div class="pt-4 border-t border-outline-variant/10">
+              <span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Adjective</span>
+              <p class="mt-2 text-on-surface font-body italic">Relating to the words or vocabulary of a language.</p>
+            </div>
+            <button onclick="scrollToSection('search-section')"
+              class="mt-2 w-full py-2.5 bg-surface-container-high text-primary text-sm font-semibold rounded-lg hover:bg-surface-container-highest transition-all active:scale-95">
+              Search your own word →
+            </button>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Live Search Section -->
-    <section id="search-section" class="py-24 px-6 bg-surface-container-low">
-        <div class="max-w-3xl mx-auto">
-            <div class="text-center mb-12">
-                <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase mb-4">
-                    <span class="live-badge w-2 h-2 rounded-full bg-primary"></span> Live Demo
-                </div>
-                <h2 class="text-4xl font-headline font-bold mb-4">Test the Endpoint</h2>
-            </div>
+  <!-- ═══════════════════ LIVE SEARCH — Flask /api/<word> ═══════════════════ -->
+  <section id="search-section" class="py-24 px-6 bg-surface-container-low">
+    <div class="max-w-3xl mx-auto">
 
-            <!-- API Key Input (Crucial for the new system) -->
-            <div class="mb-4">
-                <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2 px-1">Your API Key</label>
-                <input id="api-key-input" type="text" placeholder="Enter the key from your email..."
-                    class="w-full px-4 py-3 bg-white border border-outline-variant rounded-xl font-mono text-sm focus:ring-2 focus:ring-primary outline-none">
-            </div>
-
-            <div class="flex gap-3 mb-6">
-                <input id="search-input" type="text" placeholder="Search for a word..."
-                    class="flex-1 px-4 py-4 bg-white border border-outline-variant rounded-xl text-lg outline-none focus:ring-2 focus:ring-primary">
-                <button onclick="lookupWord()" class="px-6 py-4 bg-primary text-on-primary rounded-xl font-semibold hover:opacity-90 active:scale-95 transition-all">
-                    Search
-                </button>
-            </div>
-
-            <div id="result-box" class="hidden bg-white p-8 rounded-2xl border border-outline-variant/30 shadow-sm animate-slide-up">
-                <div id="res-success" class="hidden">
-                    <div class="flex items-center gap-2 text-primary font-mono text-xs mb-2">
-                        <span class="material-symbols-outlined text-sm">check_circle</span> AUTHORIZED ACCESS
-                    </div>
-                    <h3 id="res-word" class="text-4xl font-headline font-bold capitalize mb-4"></h3>
-                    <p id="res-def" class="text-lg text-on-surface-variant italic leading-relaxed"></p>
-                </div>
-                <div id="res-error" class="hidden text-center py-4">
-                    <span class="material-symbols-outlined text-error text-5xl mb-2">warning</span>
-                    <p id="res-error-msg" class="text-error font-medium"></p>
-                </div>
-            </div>
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+          <span class="live-badge w-2 h-2 rounded-full bg-primary inline-block"></span>
+          Live — powered by your Flask API
         </div>
-    </section>
+        <h2 class="text-4xl md:text-5xl font-headline font-bold tracking-tight mb-4">Look Up Any Word</h2>
+        <p class="text-on-surface-variant font-body">
+          Calls <code class="bg-surface-container px-1.5 py-0.5 rounded text-primary text-sm font-mono">/api/&lt;word&gt;</code>
+          on your Flask server and displays the result instantly.
+        </p>
+      </div>
 
-    <!-- Docs -->
-    <section id="api-docs" class="py-24 px-6">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Search bar -->
+      <div class="flex gap-3 mb-6">
+        <div class="relative flex-1">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">search</span>
+          <input id="search-input" type="text"
+            placeholder="Type a word and press Enter or Search…"
+            class="w-full pl-12 pr-4 py-4 bg-surface-container-lowest border border-outline-variant rounded-xl text-on-surface font-body text-base placeholder:text-on-surface-variant/50 transition-all"
+            onkeydown="if(event.key==='Enter') lookupWord()"
+          />
+        </div>
+        <button onclick="lookupWord()"
+          class="px-6 py-4 bg-primary text-on-primary rounded-xl font-semibold text-base hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-2 whitespace-nowrap">
+          <span id="search-icon" class="material-symbols-outlined text-xl">arrow_forward</span>
+          <span id="search-label">Search</span>
+        </button>
+      </div>
+
+      <!-- Quick-try chips -->
+      <div class="flex flex-wrap gap-2 mb-10">
+        <span class="text-xs text-on-surface-variant font-medium self-center mr-1">Try:</span>
+        <button class="chip" onclick="quickSearch('serendipity')">serendipity</button>
+        <button class="chip" onclick="quickSearch('ephemeral')">ephemeral</button>
+        <button class="chip" onclick="quickSearch('eloquent')">eloquent</button>
+        <button class="chip" onclick="quickSearch('ambiguous')">ambiguous</button>
+        <button class="chip" onclick="quickSearch('perseverance')">perseverance</button>
+      </div>
+
+      <!-- Result card -->
+      <div id="result-card" class="hidden">
+
+        <!-- Error -->
+        <div id="result-error" class="hidden bg-error-container border border-error/20 rounded-2xl p-8 text-center">
+          <span class="material-symbols-outlined text-error text-5xl mb-4 block">sentiment_dissatisfied</span>
+          <h3 class="text-xl font-headline font-bold text-on-surface mb-2" id="error-word"></h3>
+          <p  class="text-on-surface-variant font-body text-sm" id="error-msg"></p>
+          <button onclick="clearResult()"
+            class="mt-6 px-6 py-2.5 bg-surface text-on-surface rounded-lg text-sm font-semibold hover:bg-surface-container transition-all active:scale-95">
+            Try another word
+          </button>
+        </div>
+
+        <!-- Success -->
+        <div id="result-success" class="hidden bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/15 overflow-hidden">
+          <div class="bg-primary px-8 py-5 flex justify-between items-start">
             <div>
-                <h2 class="text-5xl font-headline font-bold mb-8">Documentation</h2>
-                <div class="space-y-6">
-                    <div class="p-4 bg-surface-container-low rounded-lg border-l-4 border-primary">
-                        <span class="font-bold block text-sm">ENDPOINT</span>
-                        <code class="text-primary">GET /api/&lt;your_key&gt;/&lt;word&gt;</code>
-                    </div>
-                    <p class="text-on-surface-variant">The API returns a JSON object containing the word and its definition. Authentication is handled via the URL path.</p>
-                </div>
+              <p class="text-primary-fixed-dim text-xs font-mono mb-1" id="res-route"></p>
+              <h3 class="text-3xl md:text-4xl font-headline font-bold text-white" id="res-word"></h3>
             </div>
-            <div class="bg-slate-900 rounded-2xl p-6 shadow-2xl overflow-hidden">
-                <div class="flex gap-1.5 mb-4">
-                    <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                    <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                </div>
-                <pre class="text-indigo-300 font-mono text-sm leading-relaxed"><code>{
-  "status": "authorized",
-  "word": "architect",
-  "definition": "A person who designs...",
-  "user": "your@email.com"
-}</code></pre>
-            </div>
+            <button onclick="copyResult()" title="Copy JSON"
+              class="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-all active:scale-95">
+              <span class="material-symbols-outlined text-base">content_copy</span> Copy JSON
+            </button>
+          </div>
+          <div class="p-8">
+            <span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Definition</span>
+            <p class="mt-3 text-on-surface font-body text-lg leading-relaxed italic" id="res-definition"></p>
+          </div>
+          <div class="border-t border-outline-variant/15 px-8 py-4 flex gap-3 flex-wrap">
+            <button onclick="clearResult()"
+              class="flex items-center gap-1.5 px-4 py-2 bg-surface-container text-on-surface-variant rounded-lg text-sm font-medium hover:bg-surface-container-high transition-all active:scale-95">
+              <span class="material-symbols-outlined text-base">refresh</span> Search again
+            </button>
+            <button onclick="scrollToSection('api-docs')"
+              class="flex items-center gap-1.5 px-4 py-2 bg-surface-container text-on-surface-variant rounded-lg text-sm font-medium hover:bg-surface-container-high transition-all active:scale-95">
+              <span class="material-symbols-outlined text-base">code</span> View API docs
+            </button>
+          </div>
         </div>
-    </section>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ FEATURES ═══════════════════════════ -->
+  <section id="features" class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-16">
+        <h2 class="text-4xl font-headline font-bold tracking-tight mb-4">Engineered for Accuracy</h2>
+        <p class="text-on-surface-variant font-body">More than just strings. We provide structured linguistic data.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+        <button onclick="scrollToSection('search-section')"
+          class="md:col-span-2 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/15 flex flex-col text-left hover:shadow-md hover:-translate-y-0.5 transition-all group">
+          <span class="material-symbols-outlined text-primary mb-4 text-4xl group-hover:scale-110 transition-transform">speed</span>
+          <h3 class="text-2xl font-headline font-bold mb-3">Fast Response Times</h3>
+          <p class="text-on-surface-variant font-body leading-relaxed">Average latency of 45 ms across our global edge nodes. Your users won't be kept waiting.</p>
+        </button>
+
+        <button onclick="scrollToSection('search-section')"
+          class="bg-primary p-8 rounded-xl flex flex-col text-on-primary text-left hover:opacity-90 hover:-translate-y-0.5 transition-all group">
+          <span class="material-symbols-outlined mb-4 text-4xl group-hover:scale-110 transition-transform">book</span>
+          <h3 class="text-2xl font-headline font-bold mb-3">Rich Definitions</h3>
+          <p class="opacity-80 font-body leading-relaxed">Deep metadata including etymology and usage examples.</p>
+        </button>
+
+        <button onclick="scrollToSection('search-section')"
+          class="bg-surface-container-highest p-8 rounded-xl border border-outline-variant/15 flex flex-col text-left hover:shadow-md hover:-translate-y-0.5 transition-all group">
+          <span class="material-symbols-outlined text-primary mb-4 text-4xl group-hover:scale-110 transition-transform">hub</span>
+          <h3 class="text-xl font-headline font-bold mb-3">Thesaurus Support</h3>
+          <p class="text-on-surface-variant font-body leading-relaxed text-sm">Synonyms, antonyms, and related concepts in real-time.</p>
+        </button>
+
+        <button onclick="scrollToSection('cta')"
+          class="md:col-span-2 bg-inverse-surface p-8 rounded-xl flex flex-col text-left hover:opacity-90 hover:-translate-y-0.5 transition-all group">
+          <span class="material-symbols-outlined text-primary-fixed mb-4 text-4xl group-hover:scale-110 transition-transform" style="font-variation-settings:'FILL' 1;">integration_instructions</span>
+          <h3 class="text-2xl font-headline font-bold text-white mb-3">Easy Integration</h3>
+          <p class="text-slate-400 font-body leading-relaxed">SDKs for Node.js, Python, Go, and Rust. Up and running in under 5 minutes.</p>
+        </button>
+
+        <button onclick="scrollToSection('hero')"
+          class="md:col-span-2 bg-surface p-8 rounded-xl border border-outline-variant/15 flex items-center justify-center hover:shadow-md transition-all group">
+          <img class="w-full h-48 object-cover rounded-lg opacity-40 grayscale group-hover:opacity-60 group-hover:grayscale-0 transition-all duration-500"
+            alt="Global network visualization"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKWNJQr4Q2OMV2_71YtntbJ_cjKAlowxp2HizoYM3fJ76oh-9s0QvzQw6g_ZhYtIHdfdn4nyBxmYlVNxOy4VZq6aPIIIy2zvkKiKIjDGr3Gkd9ChUbihQtxFpWFt6d5b3ipRbwlswjiwXL2glBSDg1TenEqcFS9buazOzgDA2UfPbNHlGGQDciYou_MN_8a0US2_nSOvnJpVaoSwdv4j_dvKvpTP3D-pNMKOyg5vIToXcJpvFtLa1WLfmMNjMNCrhQZ1kKP9xqMc33"/>
+        </button>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ API DOCS ═══════════════════════════ -->
+  <section id="api-docs" class="py-24 px-6 bg-surface-container-low">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 class="text-5xl font-headline font-bold tracking-tight mb-8">The API Endpoint</h2>
+          <p class="text-xl text-on-surface-variant mb-8 leading-relaxed">
+            Your Flask server exposes a clean REST endpoint. Hit it from any client — browser, mobile, or backend service.
+          </p>
+          <ul class="space-y-6 mb-10">
+            <li class="flex gap-4 items-start">
+              <span class="material-symbols-outlined text-primary mt-0.5" style="font-variation-settings:'FILL' 1;">check_circle</span>
+              <div>
+                <span class="font-body font-semibold block">Route</span>
+                <code class="text-primary font-mono text-sm bg-surface-container px-2 py-0.5 rounded">GET /api/&lt;word&gt;</code>
+              </div>
+            </li>
+            <li class="flex gap-4 items-start">
+              <span class="material-symbols-outlined text-primary mt-0.5" style="font-variation-settings:'FILL' 1;">check_circle</span>
+              <div>
+                <span class="font-body font-semibold block">Returns JSON</span>
+                <code class="text-primary font-mono text-sm bg-surface-container px-2 py-0.5 rounded">{"word": "…", "definition": "…"}</code>
+              </div>
+            </li>
+            <li class="flex gap-4 items-start">
+              <span class="material-symbols-outlined text-primary mt-0.5" style="font-variation-settings:'FILL' 1;">check_circle</span>
+              <div>
+                <span class="font-body font-semibold block">Data source</span>
+                <span class="font-body text-sm text-on-surface-variant">
+                  <code class="font-mono bg-surface-container px-1.5 py-0.5 rounded text-xs">dictionary.csv</code>
+                  read into a pandas DataFrame at startup via <code class="font-mono text-xs">df.loc[df['word'] == word]</code>
+                </span>
+              </div>
+            </li>
+            <li class="flex gap-4 items-start">
+              <span class="material-symbols-outlined text-primary mt-0.5" style="font-variation-settings:'FILL' 1;">check_circle</span>
+              <div>
+                <span class="font-body font-semibold block">Home route</span>
+                <code class="text-primary font-mono text-sm bg-surface-container px-2 py-0.5 rounded">GET /</code>
+                <span class="font-body text-sm text-on-surface-variant ml-1">→ renders this page via <code class="font-mono text-xs">render_template('home.html')</code></span>
+              </div>
+            </li>
+          </ul>
+          <button onclick="scrollToSection('search-section')"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-xl font-semibold text-sm hover:opacity-90 transition-all active:scale-95">
+            <span class="material-symbols-outlined text-base">open_in_new</span>
+            Try a live search
+          </button>
+        </div>
+
+        <!-- Code block -->
+        <div class="bg-inverse-surface rounded-xl overflow-hidden shadow-2xl">
+          <div class="bg-slate-800/50 px-6 py-3 flex justify-between items-center border-b border-slate-700/50">
+            <span class="text-slate-400 text-xs font-mono">GET /api/architect → response</span>
+            <button onclick="copySnippet()"
+              class="flex items-center gap-1.5 text-primary text-xs font-bold uppercase tracking-widest hover:opacity-70 transition-opacity">
+              <span class="material-symbols-outlined text-sm">content_copy</span> Copy
+            </button>
+          </div>
+          <pre id="code-block" class="p-8 text-sm font-mono leading-relaxed overflow-x-auto"><code class="text-indigo-300">{
+  <span class="text-primary-fixed">"word"</span>: <span class="text-tertiary-fixed-dim">"architect"</span>,
+  <span class="text-primary-fixed">"definition"</span>: <span class="text-tertiary-fixed-dim">"A person who designs buildings
+  and in many countries must be
+  professionally qualified to do so."</span>
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ CTA ═══════════════════════════ -->
+  <section id="cta" class="px-6 py-24">
+    <div class="max-w-5xl mx-auto bg-primary rounded-3xl p-12 md:p-20 text-center relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-transparent pointer-events-none"></div>
+      <h2 class="text-4xl md:text-6xl font-headline font-bold text-on-primary mb-6 relative z-10">
+        Ready to build the future of language?
+      </h2>
+      <p class="text-on-primary-container text-lg md:text-xl mb-10 max-w-2xl mx-auto relative z-10">
+        Join 15,000+ developers using OPEN API to power their dictionaries, translation apps, and writing tools.
+      </p>
+      <div class="flex flex-col md:flex-row justify-center gap-4 relative z-10">
+        <button onclick="openKeyModal()"
+          class="px-10 py-5 bg-white text-primary rounded-md font-bold text-lg hover:scale-105 transition-transform active:scale-95">
+          Get Free API Key
+        </button>
+        <button onclick="scrollToSection('footer')"
+          class="px-10 py-5 border border-white/30 text-white rounded-md font-bold text-lg hover:bg-white/10 transition-colors active:scale-95">
+          Talk to Sales
+        </button>
+      </div>
+    </div>
+  </section>
 </main>
 
+<!-- ═══════════════════════════ API KEY MODAL ═══════════════════════════ -->
+<div id="key-modal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4" style="display:none!important;">
+  <!-- Backdrop -->
+  <div id="modal-backdrop" onclick="closeKeyModal()"
+    class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+  <!-- Panel -->
+  <div class="modal-panel relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden z-10">
+
+    <!-- Header -->
+    <div class="bg-primary px-8 py-6 flex items-center justify-between">
+      <div>
+        <h3 class="text-xl font-headline font-bold text-white">Get your free API Key</h3>
+        <p class="text-on-primary/70 text-sm mt-0.5">Sent instantly to your inbox</p>
+      </div>
+      <button onclick="closeKeyModal()" class="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Body: step 1 — email form -->
+    <div id="modal-step-form" class="px-8 py-8">
+      <label class="block text-sm font-semibold text-on-surface mb-2" for="key-email">
+        Your email address
+      </label>
+      <div class="flex gap-3">
+        <input id="key-email" type="email" placeholder="you@example.com"
+          class="flex-1 px-4 py-3 border border-outline-variant/40 rounded-xl text-on-surface placeholder-on-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all"
+          onkeydown="if(event.key==='Enter') requestApiKey()" />
+        <button id="key-btn" onclick="requestApiKey()"
+          class="px-5 py-3 bg-primary text-on-primary rounded-xl font-semibold text-sm hover:opacity-90 transition-all active:scale-95 flex items-center gap-2 whitespace-nowrap">
+          <span id="key-btn-icon" class="material-symbols-outlined text-base">send</span>
+          <span id="key-btn-label">Send Key</span>
+        </button>
+      </div>
+      <p id="modal-error" class="hidden mt-3 text-xs text-error font-medium flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">error</span>
+        <span id="modal-error-text"></span>
+      </p>
+      <p class="mt-5 text-xs text-on-surface-variant/70 leading-relaxed">
+        🔒 We'll email you a unique key. No password needed. One key per email.
+        Use it in the <code class="font-mono bg-surface-container px-1 rounded">X-API-Key</code> header on every request.
+      </p>
+    </div>
+
+    <!-- Body: step 2 — success -->
+    <div id="modal-step-success" class="hidden px-8 py-8 text-center">
+      <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-5">
+        <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings:'FILL' 1;">mark_email_read</span>
+      </div>
+      <h4 class="text-xl font-headline font-bold text-on-surface mb-2">Check your inbox!</h4>
+      <p class="text-on-surface-variant text-sm leading-relaxed mb-1">
+        Your API key is on its way to
+      </p>
+      <p id="success-email" class="font-semibold text-primary text-sm mb-6"></p>
+
+      <!-- Usage hint -->
+      <div class="bg-inverse-surface rounded-xl overflow-hidden text-left mb-6">
+        <div class="bg-slate-800/50 px-4 py-2 text-slate-400 text-xs font-mono">How to use your key</div>
+        <pre class="px-4 py-4 text-xs font-mono text-indigo-300 leading-relaxed overflow-x-auto">GET /api/happy
+X-API-Key: <span class="text-tertiary-fixed-dim">oa_••••••••••••••••••</span></pre>
+      </div>
+
+      <button onclick="closeKeyModal()"
+        class="w-full py-3 bg-primary text-on-primary rounded-xl font-semibold text-sm hover:opacity-90 transition-all">
+        Got it, let's build!
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer id="footer" class="bg-slate-50 w-full py-12 px-6 border-t border-slate-200">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="space-y-4">
+      <button onclick="scrollToSection('hero')"
+        class="text-lg font-bold text-slate-900 font-headline hover:opacity-70 transition-opacity">
+        OPEN API
+      </button>
+      <p class="font-['Inter'] text-xs text-slate-500 max-w-xs">
+        Precision Language Data for the modern web. Empowering developers with world-class linguistic tools.
+      </p>
+      <div class="font-['Inter'] text-xs text-slate-500 pt-4">© 2024 OPEN API.</div>
+    </div>
+    <div class="grid grid-cols-2 gap-8 md:justify-items-end">
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-900">Product</h4>
+        <nav class="flex flex-col space-y-2">
+          <button onclick="scrollToSection('api-docs')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Documentation</button>
+          <button onclick="scrollToSection('cta')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Pricing</button>
+          <button onclick="showToast('✅ All systems operational')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Status</button>
+        </nav>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-900">Company</h4>
+        <nav class="flex flex-col space-y-2">
+          <!-- Footer star button -->
+          <a href="https://github.com/Robotics-now/Dictionary_api"
+             target="_blank" rel="noopener noreferrer"
+             onclick="starRepo(event)"
+             class="star-btn mt-1" id="footer-star-btn" style="font-size:0.72rem; padding:0.35rem 0.75rem;">
+            <span class="material-symbols-outlined star-icon" style="font-variation-settings:'FILL' 1; font-size:0.9rem;">star</span>
+            <span>Star on GitHub</span>
+            <svg height="13" viewBox="0 0 16 16" fill="currentColor" class="opacity-60"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <button onclick="showToast('🔒 Privacy policy coming soon')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Privacy</button>
+          <button onclick="showToast('📄 Terms of service coming soon')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Terms</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════ JAVASCRIPT ═══════════════════════════ -->
 <script>
-    function scrollToSection(id) {
-        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  let lastResult = null;   // stores last API response for copy
+
+  /* ── GitHub Star ── */
+  const REPO_URL = 'https://github.com/Robotics-now/Dictionary_api';
+  let starred = false;
+
+  function starRepo(e) {
+    // Mark as starred in session
+    starred = true;
+    localStorage.setItem('oa_starred', '1');
+    updateStarUI();
+    showToast('⭐ Thanks for starring! Redirecting to GitHub…');
+    // Small delay so toast is visible before navigation
+    setTimeout(() => window.open(REPO_URL, '_blank'), 600);
+    if (e) e.preventDefault();
+  }
+
+  function updateStarUI() {
+    const labels = [
+      document.getElementById('nav-star-label'),
+      document.getElementById('hero-star-label'),
+    ];
+    const btns = [
+      document.getElementById('nav-star-btn'),
+      document.getElementById('hero-star-btn'),
+      document.getElementById('footer-star-btn'),
+    ];
+    labels.forEach(el => { if (el) el.textContent = '⭐ Starred!'; });
+    btns.forEach(el => { if (el) el.classList.add('starred'); });
+    // Float badge
+    const floatIcon = document.getElementById('float-star-icon');
+    const floatLabel = document.getElementById('float-star-label');
+    if (floatIcon)  floatIcon.textContent  = 'star';
+    if (floatLabel) floatLabel.textContent = 'STARRED';
+  }
+
+  // Restore starred state across page reloads
+  if (localStorage.getItem('oa_starred')) { starred = true; updateStarUI(); }
+
+  /* ── Smooth scroll ── */
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const navH = document.querySelector('nav').offsetHeight;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navH, behavior: 'smooth' });
+  }
+
+  /* ── Toast ── */
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  /* ── Mobile menu ── */
+  function toggleMobileMenu() {
+    const open = document.getElementById('mobile-menu').classList.toggle('open');
+    document.getElementById('menu-icon').textContent = open ? 'close' : 'menu';
+  }
+  function closeMobileMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('menu-icon').textContent = 'menu';
+  }
+
+  /* ── Active nav link ── */
+  function setActiveNav(btn) {
+    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  /* ── Scroll-spy ── */
+  const spySections = ['hero','search-section','features','api-docs','cta'];
+  const spyIdx      = { 'hero': null, 'search-section': 0, 'features': 1, 'api-docs': 2, 'cta': 3 };
+  window.addEventListener('scroll', () => {
+    const navH = document.querySelector('nav').offsetHeight + 20;
+    // back-to-top visibility
+    document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 400);
+    // float star badge — appears after 300px
+    document.getElementById('float-star').classList.toggle('visible', window.scrollY > 300);
+    // highlight nav
+    let cur = 'hero';
+    spySections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= navH) cur = id;
+    });
+    const links = document.querySelectorAll('.nav-link');
+    links.forEach(el => el.classList.remove('active'));
+    if (spyIdx[cur] !== null && links[spyIdx[cur]]) links[spyIdx[cur]].classList.add('active');
+  });
+
+  /* ══════════════════════════════════════════════════════════════
+     CORE FUNCTION — calls your friend's Flask route:
+       GET /api/<word>
+     Flask returns: { "word": "...", "definition": "..." }
+  ══════════════════════════════════════════════════════════════ */
+  async function lookupWord() {
+    const input = document.getElementById('search-input');
+    const word  = input.value.trim().toLowerCase();
+    if (!word) { showToast('⚠️ Please type a word first'); input.focus(); return; }
+
+    setLoading(true);
+    clearResult(true); // clear old card silently
+
+    try {
+      const res  = await fetch(`/api/${encodeURIComponent(word)}`);
+      const data = await res.json();
+
+      /*
+        pandas .squeeze() on a missing word returns NaN which Flask
+        serialises as null. Handle both null and NaN string.
+      */
+      const defn = data.definition;
+      const missing = defn === null || defn === undefined ||
+                      (typeof defn === 'number' && isNaN(defn)) ||
+                      String(defn).trim() === '' ||
+                      String(defn) === 'NaN';
+
+      if (missing) {
+        showError(word, `"${word}" was not found in the dictionary. Check the spelling or try a different word.`);
+      } else {
+        showSuccess(data.word || word, String(defn));
+        lastResult = data;
+      }
+
+    } catch (err) {
+      // Network / CORS error — Flask server probably not running
+      showError(word,
+        'Could not reach the Flask server. Make sure it\'s running on http://127.0.0.1:5000 and try again.');
     }
 
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 4000);
+    setLoading(false);
+  }
+
+  /* ── Quick-try chip handler ── */
+  function quickSearch(word) {
+    document.getElementById('search-input').value = word;
+    scrollToSection('search-section');
+    lookupWord();
+  }
+
+  /* ── Show success card ── */
+  function showSuccess(word, definition) {
+    document.getElementById('result-card').classList.remove('hidden');
+    document.getElementById('result-error').classList.add('hidden');
+
+    const card = document.getElementById('result-success');
+    card.classList.remove('hidden', 'result-animate');
+    void card.offsetWidth;           // reflow → re-trigger animation
+    card.classList.add('result-animate');
+
+    document.getElementById('res-route').textContent      = `GET /api/${word}`;
+    document.getElementById('res-word').textContent       = word;
+    document.getElementById('res-definition').textContent = definition;
+  }
+
+  /* ── Show error card ── */
+  function showError(word, msg) {
+    document.getElementById('result-card').classList.remove('hidden');
+    document.getElementById('result-success').classList.add('hidden');
+    document.getElementById('result-error').classList.remove('hidden');
+    document.getElementById('error-word').textContent = `"${word}" not found`;
+    document.getElementById('error-msg').textContent  = msg;
+  }
+
+  /* ── Clear / reset (silent = don't clear input) ── */
+  function clearResult(silent = false) {
+    document.getElementById('result-card').classList.add('hidden');
+    document.getElementById('result-success').classList.add('hidden');
+    document.getElementById('result-error').classList.add('hidden');
+    if (!silent) {
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-input').focus();
+    }
+    lastResult = null;
+  }
+
+  /* ── Loading state ── */
+  function setLoading(on) {
+    const iconWrap = document.getElementById('search-icon');
+    const labelEl  = document.getElementById('search-label');
+    if (on) {
+      iconWrap.outerHTML = `<span id="search-icon" class="spinner"></span>`;
+      labelEl.textContent = 'Searching…';
+    } else {
+      document.getElementById('search-icon').outerHTML =
+        `<span id="search-icon" class="material-symbols-outlined text-xl">arrow_forward</span>`;
+      labelEl.textContent = 'Search';
+    }
+  }
+
+  /* ── Copy live result as JSON ── */
+  function copyResult() {
+    if (!lastResult) return;
+    navigator.clipboard.writeText(JSON.stringify(lastResult, null, 2))
+      .then(() => showToast('✅ JSON copied to clipboard!'))
+      .catch(() => showToast('⚠️ Copy failed'));
+  }
+
+  /* ── Copy static snippet ── */
+  function copySnippet() {
+    const raw = `{\n  "word": "architect",\n  "definition": "A person who designs buildings and in many countries must be professionally qualified to do so."\n}`;
+    navigator.clipboard.writeText(raw)
+      .then(() => showToast('✅ Snippet copied!'))
+      .catch(() => showToast('⚠️ Copy not supported in this browser'));
+  }
+
+  /* ════════════════════════════════════════
+     API KEY MODAL
+  ════════════════════════════════════════ */
+
+  function openKeyModal() {
+    // Reset to step 1 every time
+    document.getElementById('modal-step-form').classList.remove('hidden');
+    document.getElementById('modal-step-success').classList.add('hidden');
+    document.getElementById('modal-error').classList.add('hidden');
+    document.getElementById('key-email').value = '';
+    resetKeyBtn();
+
+    document.getElementById('key-modal').classList.add('open');
+    // Prevent page scroll while modal is open
+    document.body.style.overflow = 'hidden';
+    // Focus the email input after the animation starts
+    setTimeout(() => document.getElementById('key-email').focus(), 120);
+  }
+
+  function closeKeyModal() {
+    document.getElementById('key-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close modal when user presses Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeKeyModal();
+  });
+
+  function resetKeyBtn() {
+    document.getElementById('key-btn').disabled = false;
+    document.getElementById('key-btn').innerHTML = `
+      <span class="material-symbols-outlined text-base">send</span>
+      <span>Send Key</span>`;
+  }
+
+  function setKeyBtnLoading() {
+    document.getElementById('key-btn').disabled = true;
+    document.getElementById('key-btn').innerHTML = `
+      <span class="btn-spinner"></span>
+      <span>Sending…</span>`;
+  }
+
+  function showModalError(msg) {
+    const box  = document.getElementById('modal-error');
+    const text = document.getElementById('modal-error-text');
+    text.textContent = msg;
+    box.classList.remove('hidden');
+    // shake the input
+    const inp = document.getElementById('key-email');
+    inp.classList.add('shake');
+    inp.addEventListener('animationend', () => inp.classList.remove('shake'), { once: true });
+    resetKeyBtn();
+  }
+
+  async function requestApiKey() {
+    const emailInput = document.getElementById('key-email');
+    const email      = emailInput.value.trim();
+
+    // ── Client-side validation ──
+    if (!email) {
+      showModalError('Please enter your email address.');
+      return;
+    }
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRe.test(email)) {
+      showModalError('That doesn\'t look like a valid email address.');
+      return;
     }
 
-    async function handleRegister(e) {
-        e.preventDefault();
-        const email = document.getElementById('reg-email').value;
-        const btn = document.getElementById('reg-btn');
-        const text = document.getElementById('reg-btn-text');
-        const spinner = document.getElementById('reg-spinner');
+    // ── Hide error, show loading ──
+    document.getElementById('modal-error').classList.add('hidden');
+    setKeyBtnLoading();
 
-        // UI Loading
-        btn.disabled = true;
-        text.innerText = "Sending...";
-        spinner.classList.remove('hidden');
+    try {
+      // Calls your Flask route  POST /generate-key
+      const res  = await fetch('/generate-key', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email })
+      });
+      const data = await res.json();
 
-        try {
-            const formData = new FormData();
-            formData.append('email', email);
-
-            const response = await fetch('/register', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.text();
-            showToast(result);
-            if(response.ok) {
-                document.getElementById('reg-email').value = '';
-                scrollToSection('search-section');
-            }
-        } catch (err) {
-            showToast("Error: " + err.message);
-        } finally {
-            btn.disabled = false;
-            text.innerText = "Generate Key";
-            spinner.classList.add('hidden');
-        }
+      if (res.ok && data.success) {
+        // ── Step 2: success screen ──
+        document.getElementById('modal-step-form').classList.add('hidden');
+        document.getElementById('modal-step-success').classList.remove('hidden');
+        document.getElementById('success-email').textContent = email;
+        showToast('📬 API key sent! Check your inbox.');
+      } else {
+        // Server returned an error message
+        showModalError(data.message || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      // Network error — Flask server not running
+      showModalError('Could not reach the server. Is Flask running on port 5000?');
     }
-
-    async function lookupWord() {
-        const key = document.getElementById('api-key-input').value.trim();
-        const word = document.getElementById('search-input').value.trim();
-        const box = document.getElementById('result-box');
-        const successDiv = document.getElementById('res-success');
-        const errorDiv = document.getElementById('res-error');
-
-        if(!key) { showToast("Please enter your API Key first!"); return; }
-        if(!word) { showToast("Enter a word to search."); return; }
-
-        try {
-            const res = await fetch(`/api/${key}/${word}`);
-            const data = await res.json();
-
-            box.classList.remove('hidden');
-            if (res.ok) {
-                successDiv.classList.remove('hidden');
-                errorDiv.classList.add('hidden');
-                document.getElementById('res-word').innerText = data.word;
-                document.getElementById('res-def').innerText = data.definition;
-            } else {
-                successDiv.classList.add('hidden');
-                errorDiv.classList.remove('hidden');
-                document.getElementById('res-error-msg').innerText = data.error || data.message;
-            }
-        } catch (err) {
-            showToast("Server error: " + err.message);
-        }
-    }
+  }
 </script>
-
 </body>
 </html>

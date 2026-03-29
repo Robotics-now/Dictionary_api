@@ -1,3 +1,5 @@
 pandas
 flask
 gunicorn
+Flask-SQLAlchemy
+Flask-Mail

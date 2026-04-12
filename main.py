@@ -15,6 +15,7 @@ def terms():
 
 @app.route('/api/<word>')
 def about(word):
+    word = word.lower()
     definition = df.loc[df['word'] == word]["definition"].squeeze()
     return {
         'definition': definition,

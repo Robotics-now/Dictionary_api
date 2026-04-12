@@ -9,6 +9,10 @@ df = pd.read_csv('dictionary.csv')
 def home():
     return render_template('home.html')
 
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
 @app.route('/api/<word>')
 def about(word):
     definition = df.loc[df['word'] == word]["definition"].squeeze()

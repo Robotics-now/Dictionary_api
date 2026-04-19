@@ -1,11 +1,8 @@
 from difflib import get_close_matches
 from langchain_google_genai import ChatGoogleGenerativeAI
-from os import getenv
-from dotenv import load_dotenv
-
-load_dotenv()  # Load environment variables from .env file
+import os
 # Initialize LLM once
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", api_key=getenv("GOOGLE_API_KEY"))
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", api_key=os.environ.get("GOOGLE_API_KEY"))
 
 def correct_word(word: str, dictionary_words: set) -> str:
     normalized_word = word.lower().strip()

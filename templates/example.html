@@ -1,1 +1,728 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Examples | Project-Dictionary API</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-secondary-fixed-variant": "#3a485c",
+          "on-primary-container":       "#dad7ff",
+          "primary-fixed":              "#e2dfff",
+          "on-secondary-fixed":         "#0d1c2f",
+          "error-container":            "#ffdad6",
+          "inverse-primary":            "#c3c0ff",
+          "primary-container":          "#4f46e5",
+          "tertiary-container":         "#006693",
+          "on-primary-fixed-variant":   "#3323cc",
+          "surface":                    "#faf8ff",
+          "on-tertiary-fixed":          "#001e2f",
+          "surface-container-low":      "#f2f3ff",
+          "background":                 "#faf8ff",
+          "surface-container-highest":  "#dae2fd",
+          "on-primary":                 "#ffffff",
+          "inverse-on-surface":         "#eef0ff",
+          "primary":                    "#3525cd",
+          "tertiary":                   "#004d70",
+          "surface-container-high":     "#e2e7ff",
+          "outline":                    "#777587",
+          "surface-tint":               "#4d44e3",
+          "surface-variant":            "#dae2fd",
+          "on-primary-fixed":           "#0f0069",
+          "error":                      "#ba1a1a",
+          "surface-bright":             "#faf8ff",
+          "surface-dim":                "#d2d9f4",
+          "on-surface":                 "#131b2e",
+          "secondary-fixed":            "#d5e3fd",
+          "on-tertiary-fixed-variant":  "#004c6e",
+          "surface-container":          "#eaedff",
+          "surface-container-lowest":   "#ffffff",
+          "outline-variant":            "#c7c4d8",
+          "primary-fixed-dim":          "#c3c0ff",
+          "on-secondary-container":     "#57657b",
+          "on-error":                   "#ffffff",
+          "tertiary-fixed":             "#c9e6ff",
+          "tertiary-fixed-dim":         "#89ceff",
+          "secondary-fixed-dim":        "#b9c7e0",
+          "secondary":                  "#515f74",
+          "on-error-container":         "#93000a",
+          "on-background":              "#131b2e",
+          "secondary-container":        "#d5e3fd",
+          "on-tertiary-container":      "#b8e0ff",
+          "on-secondary":               "#ffffff",
+          "on-surface-variant":         "#464555",
+          "inverse-surface":            "#283044",
+          "on-tertiary":                "#ffffff"
+        },
+        fontFamily: {
+          "headline": ["Space Grotesk"],
+          "body":     ["Inter"],
+          "label":    ["Inter"],
+          "mono":     ["JetBrains Mono"]
+        },
+        borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+      },
+    },
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .nav-link.active { color: #3525cd; border-bottom: 2px solid #3525cd; font-weight: 700; }
+  #mobile-menu { max-height: 0; overflow: hidden; transition: max-height .35s ease, opacity .3s ease; opacity: 0; }
+  #mobile-menu.open { max-height: 320px; opacity: 1; }
+  #toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #283044; color: #fff;
+    padding: .75rem 1.5rem; border-radius: 9999px;
+    font-size: .875rem; font-family: 'Inter', sans-serif; font-weight: 500;
+    z-index: 9999; transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+    opacity: 0; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  #back-to-top {
+    position: fixed; bottom: 2rem; right: 2rem;
+    width: 44px; height: 44px; background: #3525cd; color: #fff;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 999; opacity: 0; transform: translateY(20px);
+    transition: opacity .3s ease, transform .3s ease; border: none;
+    box-shadow: 0 4px 16px rgba(53,37,205,.35);
+  }
+  #back-to-top.visible { opacity: 1; transform: translateY(0); }
+  #back-to-top:hover { background: #4f46e5; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .slide-up { animation: slideUp .4s ease forwards; }
+  .slide-up-delay-1 { animation: slideUp .4s .1s ease both; }
+  .slide-up-delay-2 { animation: slideUp .4s .2s ease both; }
+  .slide-up-delay-3 { animation: slideUp .4s .3s ease both; }
+  .coming-soon-badge {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    background: #eaedff; color: #3525cd;
+    border: 1px solid #c7c4d8;
+    border-radius: 9999px; padding: .25rem .75rem;
+    font-size: .7rem; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+  }
+  .step-num {
+    width: 28px; height: 28px; min-width: 28px;
+    background: #3525cd; color: #fff;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .8rem;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .live-badge { animation: pulse 1.8s ease infinite; }
+  .star-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    background: #24292f; color: #fff;
+    border-radius: 9999px;
+    font-size: 0.78rem; font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    border: 1.5px solid #444c56;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    white-space: nowrap;
+  }
+  .star-btn:hover  { background: #2d333b; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.22); }
+  .star-btn:active { transform: scale(0.96); }
+  .star-btn .star-icon { color: #f1c40f; font-size: 1rem; transition: transform 0.2s; }
+  .star-btn:hover .star-icon { transform: scale(1.25) rotate(-8deg); }
+  @keyframes starPop { 0%{transform:scale(1)} 40%{transform:scale(1.5)} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
+  .star-btn.starred .star-icon { animation: starPop 0.45s ease; color: #f1c40f; }
+  .star-btn.starred { background: #2d333b; border-color: #f1c40f55; }
+  .copy-btn { transition: all .2s; }
+  .copy-btn.copied { background: #e2dfff !important; color: #3525cd !important; }
+  .output-line { opacity: 0; transform: translateX(-8px); }
+  .output-line.show { opacity: 1; transform: translateX(0); transition: all .3s ease; }
+</style>
+</head>
+<body class="bg-surface text-on-surface">
+
+<div id="toast"></div>
+
+<button id="back-to-top" title="Back to top" onclick="scrollToSection('page-top')">
+  <span class="material-symbols-outlined" style="font-size:20px;">arrow_upward</span>
+</button>
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100/60">
+  <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+    <a href="home.html" class="text-xl font-bold tracking-tighter text-slate-900 font-['Space_Grotesk'] hover:opacity-80 transition-opacity">
+      OPEN API
+    </a>
+
+    <div class="hidden md:flex items-center space-x-8">
+      <a href="/#search-section" class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Try It</a>
+      <a href="/#features" class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Features</a>
+      <a href="/#api-docs" class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Docs</a>
+      <a href="/examples#toast" class="nav-link active text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Examples</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="https://github.com/Robotics-now/Dictionary_api"
+         target="_blank" rel="noopener noreferrer"
+         onclick="starRepo(event)"
+         class="star-btn hidden md:inline-flex" id="nav-star-btn">
+        <span class="material-symbols-outlined star-icon" style="font-variation-settings:'FILL' 1; font-size:1rem;">star</span>
+        <span id="nav-star-label">Star</span>
+        <span class="opacity-40">|</span>
+        <svg height="14" viewBox="0 0 16 16" fill="currentColor" class="opacity-70"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <a href="home.html"
+        class="hidden md:block px-5 py-2 bg-primary text-on-primary rounded-md text-sm font-medium hover:opacity-90 transition-all active:scale-95">
+        Try Live
+      </a>
+      <button id="menu-btn" onclick="toggleMobileMenu()"
+        class="p-2 text-slate-600 hover:bg-slate-100/50 rounded-lg transition-colors">
+        <span class="material-symbols-outlined" id="menu-icon">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <div id="mobile-menu" class="bg-white/95 backdrop-blur-xl border-t border-slate-100/60 px-6">
+    <div class="flex flex-col py-4 space-y-1 max-w-7xl mx-auto">
+      <a href="home.html" onclick="closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Try It</a>
+      <a href="home.html#features" onclick="closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Features</a>
+      <a href="home.html#api-docs" onclick="closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Docs</a>
+      <a href="examples.html" onclick="closeMobileMenu()"
+        class="text-left py-3 px-4 text-indigo-700 font-semibold text-sm rounded-lg bg-primary/5 transition-colors font-['Space_Grotesk']">Examples</a>
+      <div class="pt-2 border-t border-slate-100">
+        <a href="home.html"
+          class="block w-full mt-2 px-5 py-3 bg-primary text-on-primary rounded-md text-sm font-semibold hover:opacity-90 transition-all text-center">
+          Try Live
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main id="page-top" class="pt-24">
+
+  <!-- HERO -->
+  <section class="relative px-6 py-20 md:py-28 overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-xs text-on-surface-variant font-mono mb-8 slide-up">
+        <a href="home.html" class="hover:text-primary transition-colors">Home</a>
+        <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span>
+        <span class="text-primary font-semibold">Examples</span>
+      </div>
+
+      <div class="max-w-3xl slide-up-delay-1">
+        <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+          <span class="live-badge w-2 h-2 rounded-full bg-primary inline-block"></span>
+          Code Examples
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold font-headline tracking-tighter text-on-surface leading-[0.95] mb-6">
+          Integrate in <span class="text-primary italic">Minutes</span>
+        </h1>
+        <p class="text-xl text-on-surface-variant max-w-2xl leading-relaxed font-body">
+          Ready-to-run snippets for every major language. Copy, paste, and you're live against the Dictionary API.
+        </p>
+      </div>
+
+      <!-- Language Logo Strip -->
+      <div class="mt-14 slide-up-delay-2">
+        <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/50 mb-6 font-mono">Supported languages</p>
+        <div class="flex flex-wrap gap-3">
+          <button onclick="jumpTo('python-section')"
+            class="flex items-center gap-2 px-4 py-2.5 bg-[#3776ab]/10 border border-[#3776ab]/20 rounded-xl text-sm font-semibold text-[#3776ab] hover:bg-[#3776ab]/20 transition-all">
+            🐍 Python
+            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Live</span>
+          </button>
+          <div class="flex items-center gap-2 px-4 py-2.5 bg-surface-container border border-outline-variant/20 rounded-xl text-sm font-semibold text-on-surface-variant opacity-60">
+            ☕ Java <span class="coming-soon-badge ml-1">Soon</span>
+          </div>
+          <div class="flex items-center gap-2 px-4 py-2.5 bg-surface-container border border-outline-variant/20 rounded-xl text-sm font-semibold text-on-surface-variant opacity-60">
+            🟨 JavaScript <span class="coming-soon-badge ml-1">Soon</span>
+          </div>
+          <div class="flex items-center gap-2 px-4 py-2.5 bg-surface-container border border-outline-variant/20 rounded-xl text-sm font-semibold text-on-surface-variant opacity-60">
+            🟩 Node.js <span class="coming-soon-badge ml-1">Soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PYTHON EXAMPLE -->
+  <section id="python-section" class="py-16 px-6 bg-surface-container-low">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center gap-4 mb-10">
+        <div class="w-10 h-10 rounded-xl bg-[#3776ab]/15 flex items-center justify-center text-xl">🐍</div>
+        <div>
+          <h2 class="text-3xl font-headline font-bold tracking-tight">Python</h2>
+          <p class="text-on-surface-variant text-sm font-body">Using the <code class="bg-surface-container px-1.5 py-0.5 rounded font-mono text-primary text-xs">requests</code> library — stdlib compatible</p>
+        </div>
+        <span class="ml-auto inline-flex items-center gap-1.5 bg-surface-container border border-outline-variant/30 px-3 py-1 rounded-full text-xs font-bold text-on-surface-variant">
+          <span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span>
+          Live & Working
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <!-- How it works -->
+        <div class="space-y-6">
+          <h3 class="text-xl font-headline font-semibold">How it works</h3>
+          <ol class="space-y-5">
+            <li class="flex gap-4 items-start">
+              <div class="step-num flex-shrink-0 mt-0.5">1</div>
+              <div>
+                <p class="font-semibold text-sm text-on-surface">Install the dependency</p>
+                <div class="mt-2 bg-inverse-surface rounded-lg px-4 py-2.5 font-mono text-xs text-indigo-300 flex items-center justify-between">
+                  <span>pip install requests</span>
+                  <button onclick="copyText('pip install requests', this)" class="copy-btn flex items-center gap-1 text-slate-400 hover:text-white text-xs transition-colors">
+                    <span class="material-symbols-outlined" style="font-size:14px;">content_copy</span>
+                  </button>
+                </div>
+              </div>
+            </li>
+            <li class="flex gap-4 items-start">
+              <div class="step-num flex-shrink-0 mt-0.5">2</div>
+              <div>
+                <p class="font-semibold text-sm text-on-surface">Point at the Flask server</p>
+                <p class="text-on-surface-variant text-xs mt-1 leading-relaxed">By default the server runs on <code class="bg-surface-container px-1 rounded font-mono">http://localhost:8000</code>. Change the host to match your deployment.</p>
+              </div>
+            </li>
+            <li class="flex gap-4 items-start">
+              <div class="step-num flex-shrink-0 mt-0.5">3</div>
+              <div>
+                <p class="font-semibold text-sm text-on-surface">Run the script</p>
+                <p class="text-on-surface-variant text-xs mt-1 leading-relaxed">You'll be prompted for a word. The definition is printed from the JSON response field <code class="bg-surface-container px-1 rounded font-mono text-xs">data['def']</code>.</p>
+              </div>
+            </li>
+          </ol>
+
+          <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 overflow-hidden">
+            <div class="bg-surface-container px-5 py-3 border-b border-outline-variant/15 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-sm">data_object</span>
+              <span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Expected JSON Response</span>
+            </div>
+            <pre class="p-5 font-mono text-sm text-on-surface leading-relaxed overflow-x-auto"><code><span class="text-primary">{</span>
+  <span class="text-tertiary font-semibold">"word"</span>: <span class="text-green-600">"happy"</span>,
+  <span class="text-tertiary font-semibold">"def"</span>:  <span class="text-green-600">"Feeling or showing pleasure or contentment."</span>
+<span class="text-primary">}</span></code></pre>
+          </div>
+        </div>
+
+        <!-- Code block -->
+        <div class="bg-inverse-surface rounded-xl overflow-hidden shadow-2xl">
+          <div class="bg-slate-800/60 px-6 py-3 flex items-center justify-between border-b border-slate-700/50">
+            <div class="flex items-center gap-3">
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
+              </div>
+              <span class="text-slate-400 text-xs font-mono">python_ex.py</span>
+            </div>
+            <button id="copy-py-btn" onclick="copyCode('python-code', 'copy-py-btn')"
+              class="copy-btn flex items-center gap-1.5 text-slate-400 hover:text-white text-xs font-semibold transition-colors">
+              <span class="material-symbols-outlined text-sm">content_copy</span>
+              <span id="copy-py-label">Copy</span>
+            </button>
+          </div>
+          <pre id="python-code" class="p-6 text-sm font-mono leading-relaxed overflow-x-auto select-all"><code><span class="text-slate-400">import</span> <span class="text-indigo-300">requests</span>
+
+<span class="text-slate-300">user_input</span> <span class="text-slate-400">=</span> <span class="text-indigo-300">input</span><span class="text-slate-300">(</span><span class="text-green-300">"Enter a word to look up: "</span><span class="text-slate-300">)</span>
+
+<span class="text-slate-300">api_url</span> <span class="text-slate-400">=</span> <span class="text-green-300">f"http://localhost:8000/api/<span class="text-yellow-300">{user_input}</span>"</span>
+<span class="text-slate-300">response</span> <span class="text-slate-400">=</span> <span class="text-indigo-300">requests</span><span class="text-slate-300">.</span><span class="text-indigo-300">get</span><span class="text-slate-300">(api_url)</span>
+<span class="text-slate-300">data</span> <span class="text-slate-400">=</span> <span class="text-slate-300">response.</span><span class="text-indigo-300">json</span><span class="text-slate-300">()</span>
+
+<span class="text-slate-400">if</span> <span class="text-slate-300">response.status_code</span> <span class="text-slate-400">==</span> <span class="text-yellow-300">200</span><span class="text-slate-300">:</span>
+    <span class="text-slate-300">data</span> <span class="text-slate-400">=</span> <span class="text-slate-300">response.</span><span class="text-indigo-300">json</span><span class="text-slate-300">()</span>
+    <span class="text-indigo-300">print</span><span class="text-slate-300">(</span>
+        <span class="text-green-300">f"The definition of '<span class="text-yellow-300">{data['word']}</span>' is: <span class="text-yellow-300">{data['def']}</span>"</span>
+    <span class="text-slate-300">)</span></code></pre>
+
+          <div class="bg-slate-950 border-t border-slate-700/50 px-6 py-4">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="material-symbols-outlined text-green-400 text-sm">terminal</span>
+              <span class="text-xs text-slate-400 font-mono font-semibold uppercase tracking-wider">Terminal Output</span>
+              <button onclick="runSimulation()" class="ml-auto text-xs text-slate-400 hover:text-green-400 flex items-center gap-1 transition-colors font-mono">
+                <span class="material-symbols-outlined" style="font-size:14px;">play_circle</span> Run demo
+              </button>
+            </div>
+            <div id="py-terminal" class="font-mono text-xs space-y-1.5 min-h-[64px]">
+              <p class="text-slate-500"># Click "Run demo" to simulate output</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JAVA EXAMPLE — COMING SOON -->
+  <section id="java-section" class="py-16 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center gap-4 mb-10">
+        <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">☕</div>
+        <div>
+          <h2 class="text-3xl font-headline font-bold tracking-tight flex items-center gap-3">
+            Java
+            <span class="coming-soon-badge">Coming Soon</span>
+          </h2>
+          <p class="text-on-surface-variant text-sm font-body">Using <code class="bg-surface-container px-1.5 py-0.5 rounded font-mono text-primary text-xs">java.net.http.HttpClient</code> — no extra dependencies</p>
+        </div>
+      </div>
+
+      <div class="relative rounded-xl overflow-hidden border border-outline-variant/20">
+        <div class="absolute inset-0 z-10 flex flex-col items-center justify-center backdrop-blur-sm bg-surface/60">
+          <div class="bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/20 px-10 py-8 text-center max-w-sm mx-4">
+            <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">construction</span>
+            </div>
+            <h3 class="text-xl font-headline font-bold text-on-surface mb-2">Java Example</h3>
+            <p class="text-on-surface-variant text-sm font-body leading-relaxed mb-5">
+              The Java integration guide using <code class="font-mono text-xs bg-surface-container px-1 rounded">HttpClient</code> + <code class="font-mono text-xs bg-surface-container px-1 rounded">Gson</code> is in progress.
+            </p>
+            <button onclick="notifyMe()" class="w-full py-2.5 bg-primary text-on-primary rounded-lg font-semibold text-sm hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-base">notifications</span>
+              Notify me when ready
+            </button>
+          </div>
+        </div>
+        <div class="bg-inverse-surface p-0 pointer-events-none select-none" aria-hidden="true">
+          <div class="bg-slate-800/60 px-6 py-3 border-b border-slate-700/50 flex items-center gap-3">
+            <div class="flex gap-1.5">
+              <div class="w-3 h-3 rounded-full bg-red-500/40"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500/40"></div>
+              <div class="w-3 h-3 rounded-full bg-green-500/40"></div>
+            </div>
+            <span class="text-slate-500 text-xs font-mono">JavaEx.java</span>
+          </div>
+          <pre class="p-6 text-sm font-mono leading-relaxed overflow-x-auto blur-sm text-slate-400 opacity-60"><code>import java.net.http.*;
+import java.net.URI;
+
+public class JavaEx {
+    public static void main(String[] args)
+        throws Exception {
+        String word = "serendipity";
+        var client = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder()
+            .uri(URI.create(
+              "http://localhost:8000/api/" + word))
+            .GET().build();
+        var resp = client.send(request,
+            HttpResponse.BodyHandlers.ofString());
+        System.out.println(resp.body());
+    }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MORE LANGUAGES COMING -->
+  <section class="py-16 px-6 bg-surface-container-low">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-headline font-bold tracking-tight mb-3">More Languages Coming</h2>
+        <p class="text-on-surface-variant font-body">We're building out examples for every major ecosystem.</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 p-6 flex flex-col items-center gap-3 opacity-60">
+          <span class="text-3xl">🟨</span>
+          <span class="font-headline font-bold text-sm">JavaScript</span>
+          <code class="text-xs font-mono text-on-surface-variant bg-surface-container px-2 py-1 rounded">fetch()</code>
+          <span class="coming-soon-badge">Soon</span>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 p-6 flex flex-col items-center gap-3 opacity-60">
+          <span class="text-3xl">🟩</span>
+          <span class="font-headline font-bold text-sm">Node.js</span>
+          <code class="text-xs font-mono text-on-surface-variant bg-surface-container px-2 py-1 rounded">axios</code>
+          <span class="coming-soon-badge">Soon</span>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 p-6 flex flex-col items-center gap-3 opacity-60">
+          <span class="text-3xl">🦀</span>
+          <span class="font-headline font-bold text-sm">Rust</span>
+          <code class="text-xs font-mono text-on-surface-variant bg-surface-container px-2 py-1 rounded">reqwest</code>
+          <span class="coming-soon-badge">Soon</span>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 p-6 flex flex-col items-center gap-3 opacity-60">
+          <span class="text-3xl">🔵</span>
+          <span class="font-headline font-bold text-sm">Go</span>
+          <code class="text-xs font-mono text-on-surface-variant bg-surface-container px-2 py-1 rounded">net/http</code>
+          <span class="coming-soon-badge">Soon</span>
+        </div>
+      </div>
+      <div class="mt-8 text-center">
+        <p class="text-sm text-on-surface-variant font-body mb-4">Want to see your language first?</p>
+        <button onclick="showToast('📬 Thanks! We\'ll prioritize your language request.')"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-xl font-semibold text-sm hover:opacity-90 transition-all active:scale-95">
+          <span class="material-symbols-outlined text-base">add_circle</span>
+          Request a language
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK REFERENCE -->
+  <section class="py-16 px-6">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-headline font-bold tracking-tight mb-10">Quick Reference</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">route</span>
+            <h3 class="font-headline font-bold">Endpoint</h3>
+          </div>
+          <code class="block bg-surface-container px-4 py-3 rounded-lg font-mono text-sm text-primary">GET /api/&#123;word&#125;</code>
+          <p class="text-xs text-on-surface-variant mt-3 leading-relaxed font-body">Replace <code class="font-mono bg-surface-container px-1 rounded">{word}</code> with any English word. URL-encode spaces if needed.</p>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">data_object</span>
+            <h3 class="font-headline font-bold">Response Shape</h3>
+          </div>
+          <pre class="bg-surface-container px-4 py-3 rounded-lg font-mono text-xs text-on-surface leading-relaxed overflow-x-auto"><code>&#123;
+  "word": "string",
+  "def":  "string"
+&#125;</code></pre>
+          <p class="text-xs text-on-surface-variant mt-3 leading-relaxed font-body">Both fields are always strings. <code class="font-mono bg-surface-container px-1 rounded">def</code> may be <code class="font-mono bg-surface-container px-1 rounded">null</code> if the word isn't found.</p>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">http</span>
+            <h3 class="font-headline font-bold">Status Codes</h3>
+          </div>
+          <ul class="space-y-2 text-xs font-mono">
+            <li class="flex items-center gap-3">
+              <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">200</span>
+              <span class="text-on-surface-variant font-body">Word found, definition returned</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded font-bold">404</span>
+              <span class="text-on-surface-variant font-body">Word not in dictionary CSV</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded font-bold">500</span>
+              <span class="text-on-surface-variant font-body">Internal server error</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="px-6 py-16">
+    <div class="max-w-5xl mx-auto bg-primary rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-transparent pointer-events-none"></div>
+      <h2 class="text-3xl md:text-5xl font-headline font-bold text-on-primary mb-5 relative z-10">Ready to go live?</h2>
+      <p class="text-on-primary-container text-lg mb-8 max-w-xl mx-auto relative z-10">
+        Boot the Flask server, pick your language, and ship your first dictionary-powered feature today.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
+        <a href="/#search-input"
+          class="px-8 py-4 bg-white text-primary rounded-md font-bold text-base hover:bg-white/90 transition-colors active:scale-95 inline-block">
+          Try Live Search →
+        </a>
+        <a href="home.html#api-docs"
+          class="px-8 py-4 border border-white/30 text-white rounded-md font-bold text-base hover:bg-white/10 transition-colors active:scale-95 inline-block">
+          View Full Docs
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer id="footer" class="bg-slate-50 w-full py-12 px-6 border-t border-slate-200">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="space-y-4">
+      <a href="home.html" class="text-lg font-bold text-slate-900 font-headline hover:opacity-70 transition-opacity inline-block">
+        OPEN API
+      </a>
+      <p class="font-['Inter'] text-xs text-slate-500 max-w-xs">
+        Precision Language Data for the modern web. Empowering developers with world-class linguistic tools.
+      </p>
+      <div class="font-['Inter'] text-xs text-slate-500 pt-4">© 2026 OPEN API.</div>
+    </div>
+    <div class="grid grid-cols-2 gap-8 md:justify-items-end">
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-900">Product</h4>
+        <nav class="flex flex-col space-y-2">
+          <a href="home.html#api-docs"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Documentation</a>
+          <a href="home.html#cta"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Pricing</a>
+          <button onclick="showToast('✅ All systems operational')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Status</button>
+          <a href="examples.html"
+            class="text-left text-indigo-500 font-['Inter'] text-xs font-semibold transition-all">Examples ↗</a>
+        </nav>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-900">Company</h4>
+        <nav class="flex flex-col space-y-2">
+          <a href="https://github.com/Robotics-now/Dictionary_api"
+             target="_blank" rel="noopener noreferrer"
+             onclick="starRepo(event)"
+             class="star-btn mt-1" id="footer-star-btn" style="font-size:0.72rem; padding:0.35rem 0.75rem;">
+            <span class="material-symbols-outlined star-icon" style="font-variation-settings:'FILL' 1; font-size:0.9rem;">star</span>
+            <span>Star on GitHub</span>
+            <svg height="13" viewBox="0 0 16 16" fill="currentColor" class="opacity-60"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <button onclick="showToast('🔒 Privacy policy coming soon')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Privacy</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto mt-10 pt-8 border-t border-slate-200">
+    <p class="text-xs text-slate-400 text-center mb-5 font-medium uppercase tracking-widest">Built by</p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="https://github.com/Robotics-now" target="_blank" rel="noopener noreferrer"
+        class="team-card group flex items-center gap-3 px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+        <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center flex-shrink-0">
+          <svg height="16" viewBox="0 0 16 16" fill="white"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </div>
+        <div class="text-left">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none mb-0.5">Backend</p>
+          <p class="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors font-['Space_Grotesk']">Robotics-now / Aditya Raj</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-300 group-hover:text-indigo-400 transition-colors text-base ml-1">open_in_new</span>
+      </a>
+      <span class="text-slate-300 text-lg hidden sm:block">×</span>
+      <a href="https://github.com/prajasus2308" target="_blank" rel="noopener noreferrer"
+        class="team-card group flex items-center gap-3 px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+          <svg height="16" viewBox="0 0 16 16" fill="white"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </div>
+        <div class="text-left">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none mb-0.5">Frontend {the design} · Pratyush Raj</p>
+          <p class="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors font-['Space_Grotesk']">prajasus2308</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-300 group-hover:text-indigo-400 transition-colors text-base ml-1">open_in_new</span>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function toggleMobileMenu() {
+    const open = document.getElementById('mobile-menu').classList.toggle('open');
+    document.getElementById('menu-icon').textContent = open ? 'close' : 'menu';
+  }
+  function closeMobileMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('menu-icon').textContent = 'menu';
+  }
+
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const navH = document.querySelector('nav').offsetHeight;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navH, behavior: 'smooth' });
+  }
+  function jumpTo(id) { scrollToSection(id); }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;">check</span>';
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 1800);
+      showToast('✅ Copied!');
+    }).catch(() => showToast('⚠️ Copy failed'));
+  }
+
+  function copyCode(preId, btnId) {
+    const pre = document.getElementById(preId);
+    const text = pre.innerText || pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const label = document.getElementById('copy-py-label');
+      const btn = document.getElementById(btnId);
+      btn.classList.add('copied');
+      label.textContent = 'Copied!';
+      setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copy'; }, 1800);
+      showToast('✅ Code copied!');
+    }).catch(() => showToast('⚠️ Copy not supported in this browser'));
+  }
+
+  const REPO_URL = 'https://github.com/Robotics-now/Dictionary_api';
+  let starred = false;
+
+  function starRepo(e) {
+    starred = true;
+    localStorage.setItem('oa_starred', '1');
+    updateStarUI();
+    showToast('Redirecting to GitHub… ⭐ Thanks for starring!');
+    setTimeout(() => window.open(REPO_URL, '_blank'), 600);
+    if (e) e.preventDefault();
+  }
+
+  function updateStarUI() {
+    const btn = document.getElementById('nav-star-btn');
+    const label = document.getElementById('nav-star-label');
+    if (label) label.textContent = '⭐ Starred!';
+    if (btn) btn.classList.add('starred');
+    const footerBtn = document.getElementById('footer-star-btn');
+    if (footerBtn) footerBtn.classList.add('starred');
+  }
+
+  if (localStorage.getItem('oa_starred')) { starred = true; updateStarUI(); }
+
+  function notifyMe() {
+    showToast('📬 You\'ll be notified when the Java example is live!');
+  }
+
+  const demoSteps = [
+    { text: '$ python python_ex.py', color: 'text-green-400', delay: 0 },
+    { text: 'Enter a word to look up: serendipity', color: 'text-slate-300', delay: 500 },
+    { text: "The definition of 'serendipity' is: The occurrence and development of events by chance in a happy or beneficial way.", color: 'text-indigo-300', delay: 1200 },
+  ];
+
+  function runSimulation() {
+    const terminal = document.getElementById('py-terminal');
+    terminal.innerHTML = '';
+    demoSteps.forEach((step, i) => {
+      setTimeout(() => {
+        const line = document.createElement('p');
+        line.className = `output-line ${step.color} font-mono text-xs`;
+        line.textContent = step.text;
+        terminal.appendChild(line);
+        requestAnimationFrame(() => requestAnimationFrame(() => line.classList.add('show')));
+        if (i === demoSteps.length - 1) {
+          setTimeout(() => showToast('✅ Demo complete!'), 400);
+        }
+      }, step.delay);
+    });
+  }
+</script>
+</body>
+</html>
 

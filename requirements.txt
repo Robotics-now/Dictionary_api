@@ -3,4 +3,5 @@ fastapi
 uvicorn
 jinja2
 gunicorn
-
+langchain
+langchain-google-genai

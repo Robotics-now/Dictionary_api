@@ -12,7 +12,7 @@
 <script id="tailwind-config">
   tailwind.config = {
     darkMode: "class",
-    theme: { 
+    theme: {
       extend: {
         colors: {
           "on-secondary-fixed-variant": "#3a485c",
@@ -251,10 +251,9 @@
         class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Features</button>
       <button onclick="scrollToSection('api-docs'); setActiveNav(this)"
         class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Docs</button>
-      <a href="/examples#toast"
-        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Examples</a>
+      <button onclick="scrollToSection('cta'); setActiveNav(this)"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Pricing</button>
     </div>
-
 
     <div class="flex items-center gap-3">
       <!-- GitHub Star button in nav -->
@@ -365,7 +364,7 @@
       <div class="text-center mb-12">
         <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
           <span class="live-badge w-2 h-2 rounded-full bg-primary inline-block"></span>
-          Live — powered by Open API
+          Live — powered by your Flask API
         </div>
         <h2 class="text-4xl md:text-5xl font-headline font-bold tracking-tight mb-4">Look Up Any Word</h2>
         <p class="text-on-surface-variant font-body">

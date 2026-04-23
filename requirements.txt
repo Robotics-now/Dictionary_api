@@ -1,7 +1,3 @@
 pandas
-fastapi
-uvicorn
-jinja2
+flask
 gunicorn
-langchain
-langchain-google-genai

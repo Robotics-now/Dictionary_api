@@ -147,6 +147,48 @@
   .copy-btn.copied { background: #e2dfff !important; color: #3525cd !important; }
   .output-line { opacity: 0; transform: translateX(-8px); }
   .output-line.show { opacity: 1; transform: translateX(0); transition: all .3s ease; }
+
+  /* ── GitHub Gist dark-mode overrides ── */
+  #python-code { padding: 0 !important; background: transparent !important; }
+  #python-code .gist { margin: 0 !important; }
+  #python-code .gist .gist-file {
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: #1e2130 !important;
+  }
+  #python-code .gist .gist-data {
+    background: #1e2130 !important;
+    border-bottom: 1px solid #30374a !important;
+  }
+  #python-code .gist .highlight,
+  #python-code .gist table.highlight {
+    background: #1e2130 !important;
+  }
+  #python-code .gist .blob-num,
+  #python-code .gist .blob-code {
+    background: #1e2130 !important;
+    color: #c9d1d9 !important;
+  }
+  #python-code .gist .blob-num {
+    color: #555e7a !important;
+    border-right: 1px solid #30374a !important;
+  }
+  #python-code .gist .pl-k  { color: #818cf8 !important; }
+  #python-code .gist .pl-s,
+  #python-code .gist .pl-s1 { color: #86efac !important; }
+  #python-code .gist .pl-c1 { color: #fbbf24 !important; }
+  #python-code .gist .pl-e,
+  #python-code .gist .pl-en { color: #a5b4fc !important; }
+  #python-code .gist .pl-c  { color: #6b7280 !important; font-style: italic; }
+  #python-code .gist .gist-meta {
+    background: #161b27 !important;
+    color: #6b7280 !important;
+    border-top: 1px solid #30374a !important;
+    font-size: 0.72rem !important;
+    padding: 8px 16px !important;
+  }
+  #python-code .gist .gist-meta a { color: #818cf8 !important; }
 </style>
 </head>
 <body class="bg-surface text-on-surface">
@@ -332,25 +374,15 @@
               </div>
               <span class="text-slate-400 text-xs font-mono">python_ex.py</span>
             </div>
-            <button id="copy-py-btn" onclick="copyCode('python-code', 'copy-py-btn')"
+            <a href="https://gist.github.com/Robotics-now/16f67688b8825f08e88e39cf3e532d61" target="_blank" rel="noopener noreferrer"
               class="copy-btn flex items-center gap-1.5 text-slate-400 hover:text-white text-xs font-semibold transition-colors">
-              <span class="material-symbols-outlined text-sm">content_copy</span>
-              <span id="copy-py-label">Copy</span>
-            </button>
+              <span class="material-symbols-outlined text-sm">open_in_new</span>
+              <span id="copy-py-label">View Gist</span>
+            </a>
           </div>
-          <pre id="python-code" class="p-6 text-sm font-mono leading-relaxed overflow-x-auto select-all"><code><span class="text-slate-400">import</span> <span class="text-indigo-300">requests</span>
-
-<span class="text-slate-300">user_input</span> <span class="text-slate-400">=</span> <span class="text-indigo-300">input</span><span class="text-slate-300">(</span><span class="text-green-300">"Enter a word to look up: "</span><span class="text-slate-300">)</span>
-
-<span class="text-slate-300">api_url</span> <span class="text-slate-400">=</span> <span class="text-green-300">f"http://localhost:8000/api/<span class="text-yellow-300">{user_input}</span>"</span>
-<span class="text-slate-300">response</span> <span class="text-slate-400">=</span> <span class="text-indigo-300">requests</span><span class="text-slate-300">.</span><span class="text-indigo-300">get</span><span class="text-slate-300">(api_url)</span>
-<span class="text-slate-300">data</span> <span class="text-slate-400">=</span> <span class="text-slate-300">response.</span><span class="text-indigo-300">json</span><span class="text-slate-300">()</span>
-
-<span class="text-slate-400">if</span> <span class="text-slate-300">response.status_code</span> <span class="text-slate-400">==</span> <span class="text-yellow-300">200</span><span class="text-slate-300">:</span>
-    <span class="text-slate-300">data</span> <span class="text-slate-400">=</span> <span class="text-slate-300">response.</span><span class="text-indigo-300">json</span><span class="text-slate-300">()</span>
-    <span class="text-indigo-300">print</span><span class="text-slate-300">(</span>
-        <span class="text-green-300">f"The definition of '<span class="text-yellow-300">{data['word']}</span>' is: <span class="text-yellow-300">{data['def']}</span>"</span>
-    <span class="text-slate-300">)</span></code></pre>
+          <div id="python-code" class="p-6 overflow-x-auto">
+            <script src="https://gist.github.com/Robotics-now/16f67688b8825f08e88e39cf3e532d61.js"></script>
+          </div>
 
           <div class="bg-slate-950 border-t border-slate-700/50 px-6 py-4">
             <div class="flex items-center gap-2 mb-3">

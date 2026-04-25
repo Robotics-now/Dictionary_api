@@ -12,7 +12,7 @@
 <script id="tailwind-config">
   tailwind.config = {
     darkMode: "class",
-    theme: {
+    theme: { 
       extend: {
         colors: {
           "on-secondary-fixed-variant": "#3a485c",
@@ -251,9 +251,10 @@
         class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Features</button>
       <button onclick="scrollToSection('api-docs'); setActiveNav(this)"
         class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Docs</button>
-      <button onclick="scrollToSection('cta'); setActiveNav(this)"
-        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Pricing</button>
+      <a href="/examples#toast"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Examples</a>
     </div>
+
 
     <div class="flex items-center gap-3">
       <!-- GitHub Star button in nav -->
@@ -340,7 +341,7 @@
             <div class="w-3 h-3 rounded-full bg-surface-container-highest"></div>
           </div>
           <div class="space-y-4">
-            <div class="text-primary font-mono text-sm">GET /api/open</div>
+            <div class="text-primary font-mono text-sm">GET /api/eng/open</div>
             <div class="text-secondary text-5xl font-headline">open api</div>
             <div class="text-primary text-2xl font-headline">/ˈleksɪk(ə)l/</div>
             <div class="pt-4 border-t border-outline-variant/10">
@@ -357,19 +358,19 @@
     </div>
   </section>
 
-  <!-- ═══════════════════ LIVE SEARCH — Flask /api/<word> ═══════════════════ -->
+  <!-- ═══════════════════ LIVE SEARCH — FastAPI /api/<language>/<word> ═══════════════════ -->
   <section id="search-section" class="py-24 px-6 bg-surface-container-low">
     <div class="max-w-3xl mx-auto">
 
       <div class="text-center mb-12">
         <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
           <span class="live-badge w-2 h-2 rounded-full bg-primary inline-block"></span>
-          Live — powered by your Flask API
+          Live — powered by Open API
         </div>
         <h2 class="text-4xl md:text-5xl font-headline font-bold tracking-tight mb-4">Look Up Any Word</h2>
         <p class="text-on-surface-variant font-body">
-          Calls <code class="bg-surface-container px-1.5 py-0.5 rounded text-primary text-sm font-mono">/api/&lt;word&gt;</code>
-         Flask server and displays the result instantly.
+          Calls <code class="bg-surface-container px-1.5 py-0.5 rounded text-primary text-sm font-mono">/api/&lt;language&gt;/&lt;word&gt;</code>
+         FastAPI server and displays the result instantly.
         </p>
       </div>
 
@@ -502,14 +503,14 @@
         <div>
           <h2 class="text-5xl font-headline font-bold tracking-tight mb-8">The API Endpoint</h2>
           <p class="text-xl text-on-surface-variant mb-8 leading-relaxed">
-            THE Flask server exposes a clean REST endpoint. Hit it from any client — browser, mobile, or backend service.
+            THE FastAPI server exposes a clean REST endpoint. Hit it from any client — browser, mobile, or backend service.
           </p>
           <ul class="space-y-6 mb-10">
             <li class="flex gap-4 items-start">
               <span class="material-symbols-outlined text-primary mt-0.5" style="font-variation-settings:'FILL' 1;">check_circle</span>
               <div>
                 <span class="font-body font-semibold block">Route</span>
-                <code class="text-primary font-mono text-sm bg-surface-container px-2 py-0.5 rounded">GET /api/&lt;word&gt;</code>
+                <code class="text-primary font-mono text-sm bg-surface-container px-2 py-0.5 rounded">GET /api/&lt;language&gt;/&lt;word&gt;</code>
               </div>
             </li>
             <li class="flex gap-4 items-start">
@@ -674,8 +675,8 @@ X-API-Key: <span class="text-tertiary-fixed-dim">oa_•••••••••�
       <div class="space-y-3">
         <h4 class="text-xs font-bold uppercase tracking-widest text-slate-900">Product</h4>
         <nav class="flex flex-col space-y-2">
-          <button onclick="scrollToSection('api-docs')"
-            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Documentation</button>
+          <a herf="/docs"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Documentation</a>
           <button onclick="scrollToSection('cta')"
             class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Pricing</button>
           <button onclick="showToast('✅ All systems operational')"
@@ -835,9 +836,9 @@ X-API-Key: <span class="text-tertiary-fixed-dim">oa_•••••••••�
   });
 
   /* ══════════════════════════════════════════════════════════════
-     CORE FUNCTION — calls your friend's Flask route:
-       GET /api/<word>
-     Flask returns: { "word": "...", "definition": "..." }
+     CORE FUNCTION — calls your fast route:
+       GET /api/<language>/<word>
+     FastAPI returns: { "word": "...", "definition": "..." }
   ══════════════════════════════════════════════════════════════ */
   async function lookupWord() {
     const input = document.getElementById('search-input');
@@ -938,7 +939,7 @@ X-API-Key: <span class="text-tertiary-fixed-dim">oa_•••••••••�
   function copyResult() {
     if (!lastResult) return;
     navigator.clipboard.writeText(JSON.stringify(lastResult, null, 2))
-      .then(() => showToast('✅ JSON copied to clipboard!'))
+      .then(() => showToast('⧉ JSON copied to clipboard!'))
       .catch(() => showToast('⚠️ Copy failed'));
   }
 
@@ -946,7 +947,7 @@ X-API-Key: <span class="text-tertiary-fixed-dim">oa_•••••••••�
   function copySnippet() {
     const raw = `{\n  "word": "architect",\n  "definition": "A person who designs buildings and in many countries must be professionally qualified to do so."\n}`;
     navigator.clipboard.writeText(raw)
-      .then(() => showToast('✅ Snippet copied!'))
+      .then(() => showToast('⧉ Snippet copied!'))
       .catch(() => showToast('⚠️ Copy not supported in this browser'));
   }
 
@@ -1025,7 +1026,6 @@ X-API-Key: <span class="text-tertiary-fixed-dim">oa_•••••••••�
     setKeyBtnLoading();
 
     try {
-      // Calls your Flask route  POST /generate-key
       const res  = await fetch('/generate-key', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },

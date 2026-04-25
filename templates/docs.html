@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<link rel="icon" type="image/png" href="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/wAARCAAgACADASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAABQMEBgL/xAAmEAABBAICAQQDAQAAAAAAAAABAAIDBAUREiExBhNBUWFx0f/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDnUREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERARF//Z"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Docs | OPEN API — Dictionary API</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: { 
+      extend: {
+        colors: {
+          "on-secondary-fixed-variant": "#3a485c",
+          "on-primary-container":       "#dad7ff",
+          "primary-fixed":              "#e2dfff",
+          "on-secondary-fixed":         "#0d1c2f",
+          "error-container":            "#ffdad6",
+          "inverse-primary":            "#c3c0ff",
+          "primary-container":          "#4f46e5",
+          "tertiary-container":         "#006693",
+          "on-primary-fixed-variant":   "#3323cc",
+          "surface":                    "#faf8ff",
+          "on-tertiary-fixed":          "#001e2f",
+          "surface-container-low":      "#f2f3ff",
+          "background":                 "#faf8ff",
+          "surface-container-highest":  "#dae2fd",
+          "on-primary":                 "#ffffff",
+          "inverse-on-surface":         "#eef0ff",
+          "primary":                    "#3525cd",
+          "tertiary":                   "#004d70",
+          "surface-container-high":     "#e2e7ff",
+          "outline":                    "#777587",
+          "surface-tint":               "#4d44e3",
+          "surface-variant":            "#dae2fd",
+          "on-primary-fixed":           "#0f0069",
+          "error":                      "#ba1a1a",
+          "surface-bright":             "#faf8ff",
+          "surface-dim":                "#d2d9f4",
+          "on-surface":                 "#131b2e",
+          "secondary-fixed":            "#d5e3fd",
+          "on-tertiary-fixed-variant":  "#004c6e",
+          "surface-container":          "#eaedff",
+          "surface-container-lowest":   "#ffffff",
+          "outline-variant":            "#c7c4d8",
+          "primary-fixed-dim":          "#c3c0ff",
+          "on-secondary-container":     "#57657b",
+          "on-error":                   "#ffffff",
+          "tertiary-fixed":             "#c9e6ff",
+          "tertiary-fixed-dim":         "#89ceff",
+          "secondary-fixed-dim":        "#b9c7e0",
+          "secondary":                  "#515f74",
+          "on-error-container":         "#93000a",
+          "on-background":              "#131b2e",
+          "secondary-container":        "#d5e3fd",
+          "on-tertiary-container":      "#b8e0ff",
+          "on-secondary":               "#ffffff",
+          "on-surface-variant":         "#464555",
+          "inverse-surface":            "#283044",
+          "on-tertiary":                "#ffffff"
+        },
+        fontFamily: {
+          "headline": ["Space Grotesk"],
+          "body":     ["Inter"],
+          "label":    ["Inter"],
+          "mono":     ["JetBrains Mono"]
+        },
+        borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+      },
+    },
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* ── Nav active state ── */
+  .nav-link.active { color: #3525cd; border-bottom: 2px solid #3525cd; font-weight: 700; }
+
+  /* ── Mobile menu ── */
+  #mobile-menu { max-height: 0; overflow: hidden; transition: max-height .35s ease, opacity .3s ease; opacity: 0; }
+  #mobile-menu.open { max-height: 320px; opacity: 1; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #283044; color: #fff;
+    padding: .75rem 1.5rem; border-radius: 9999px;
+    font-size: .875rem; font-family: 'Inter', sans-serif; font-weight: 500;
+    z-index: 9999; transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+    opacity: 0; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── Back to top ── */
+  #back-to-top {
+    position: fixed; bottom: 2rem; right: 2rem;
+    width: 44px; height: 44px; background: #3525cd; color: #fff;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 999; opacity: 0; transform: translateY(20px);
+    transition: opacity .3s ease, transform .3s ease; border: none;
+    box-shadow: 0 4px 16px rgba(53,37,205,.35);
+  }
+  #back-to-top.visible { opacity: 1; transform: translateY(0); }
+  #back-to-top:hover { background: #4f46e5; }
+
+  /* ── GitHub Star button ── */
+  .star-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    background: #24292f; color: #fff;
+    border-radius: 9999px;
+    font-size: 0.78rem; font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    border: 1.5px solid #444c56;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    white-space: nowrap;
+  }
+  .star-btn:hover  { background: #2d333b; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.22); }
+  .star-btn:active { transform: scale(0.96); }
+  .star-btn .star-icon { color: #f1c40f; font-size: 1rem; transition: transform 0.2s; }
+  .star-btn:hover .star-icon { transform: scale(1.25) rotate(-8deg); }
+
+  @keyframes starPop { 0%{transform:scale(1)} 40%{transform:scale(1.5)} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
+  .star-btn.starred .star-icon { animation: starPop 0.45s ease; color: #f1c40f; }
+  .star-btn.starred { background: #2d333b; border-color: #f1c40f55; }
+
+  /* ── Language tag ── */
+  .lang-tag {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 1rem 1.25rem;
+    border: 1.5px solid;
+    border-radius: 0.75rem;
+    transition: transform 0.18s, box-shadow 0.18s;
+    cursor: default;
+  }
+  .lang-tag.available {
+    background: #ffffff; border-color: #c7c4d8;
+  }
+  .lang-tag.available:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(53,37,205,.12); }
+  .lang-tag.grayed {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(1);
+  }
+
+  /* ── Code block syntax highlighting ── */
+  .json-key   { color: #c3c0ff; }
+  .json-str   { color: #89ceff; }
+  .json-null  { color: #f87171; }
+  .json-punc  { color: #94a3b8; }
+
+  /* ── Slide-up animation ── */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .slide-up { animation: slideUp .45s ease forwards; }
+
+  /* ── Section scroll dot nav ── */
+  .doc-section { scroll-margin-top: 96px; }
+
+  /* ── Live badge pulse ── */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .live-badge { animation: pulse 1.8s ease infinite; }
+
+  /* ── Endpoint pill ── */
+  .method-pill {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    background: #dcfce7; color: #166534;
+  }
+
+  /* ── Copy button flash ── */
+  .copy-btn { transition: background 0.18s, color 0.18s; }
+  .copy-btn.copied { background: #dcfce7 !important; color: #166534 !important; }
+
+  /* scrollbar styling for code */
+  pre::-webkit-scrollbar { height: 5px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: #475569; border-radius: 99px; }
+</style>
+</head>
+<body class="bg-surface text-on-surface">
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Back to top -->
+<button id="back-to-top" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <span class="material-symbols-outlined" style="font-size:20px;">arrow_upward</span>
+</button>
+
+<!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100/60">
+  <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+    <a href="/" class="text-xl font-bold tracking-tighter text-slate-900 font-['Space_Grotesk'] hover:opacity-80 transition-opacity">
+      OPEN API
+    </a>
+
+    <div class="hidden md:flex items-center space-x-8">
+      <a href="/#search-section"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Try It</a>
+      <a href="/#features"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Features</a>
+      <a href="/docs"
+        class="nav-link active text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Docs</a>
+      <a href="/examples"
+        class="nav-link text-slate-600 hover:text-slate-900 font-['Space_Grotesk'] text-sm font-medium tracking-tight transition-colors pb-0.5">Examples</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="https://github.com/Robotics-now/Dictionary_api"
+         target="_blank" rel="noopener noreferrer"
+         class="star-btn hidden md:inline-flex" id="nav-star-btn">
+        <span class="material-symbols-outlined star-icon" style="font-variation-settings:'FILL' 1; font-size:1rem;">star</span>
+        <span id="nav-star-label">Star</span>
+        <span class="opacity-40">|</span>
+        <svg height="14" viewBox="0 0 16 16" fill="currentColor" class="opacity-70"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <a href="/#search-section"
+        class="hidden md:block px-5 py-2 bg-primary text-on-primary rounded-md text-sm font-medium hover:opacity-90 transition-all active:scale-95">
+        Get Started
+      </a>
+      <button id="menu-btn" onclick="toggleMobileMenu()"
+        class="p-2 text-slate-600 hover:bg-slate-100/50 rounded-lg transition-colors">
+        <span class="material-symbols-outlined" id="menu-icon">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <div id="mobile-menu" class="bg-white/95 backdrop-blur-xl border-t border-slate-100/60 px-6">
+    <div class="flex flex-col py-4 space-y-1 max-w-7xl mx-auto">
+      <a href="/#search-section" onclick="closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Try It</a>
+      <a href="/#features" onclick="closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Features</a>
+      <a href="/docs" onclick="closeMobileMenu()"
+        class="text-left py-3 px-4 text-primary font-semibold text-sm rounded-lg bg-surface-container-low transition-colors font-['Space_Grotesk']">Docs</a>
+      <a href="/examples" onclick="closeMobileMenu()"
+        class="text-left py-3 px-4 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors font-['Space_Grotesk']">Examples</a>
+      <div class="pt-2 border-t border-slate-100">
+        <a href="/#search-section"
+          class="block w-full mt-2 px-5 py-3 bg-primary text-on-primary rounded-md text-sm font-semibold hover:opacity-90 transition-all text-center">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="pt-24">
+
+  <!-- ═══════════════════════════ DOCS HERO ═══════════════════════════ -->
+  <section class="relative px-6 py-16 md:py-24 overflow-hidden border-b border-outline-variant/20">
+    <div class="max-w-7xl mx-auto">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-xs text-on-surface-variant font-mono mb-6">
+        <a href="/" class="hover:text-primary transition-colors">Home</a>
+        <span class="opacity-40">/</span>
+        <span class="text-primary font-semibold">Docs</span>
+      </div>
+
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+        <div>
+          <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-5">
+            <span class="live-badge w-2 h-2 rounded-full bg-primary inline-block"></span>
+            REST API · v1.0
+          </div>
+          <h1 class="text-5xl md:text-7xl font-bold font-headline tracking-tighter text-on-surface leading-[0.95] mb-5">
+            API <span class="text-primary italic">Reference</span>
+          </h1>
+          <p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed font-body">
+            Everything you need to integrate the Dictionary API into your application. Browse endpoints, language support, and example responses.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="#endpoint" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-xl font-semibold text-sm hover:opacity-90 transition-all active:scale-95">
+            <span class="material-symbols-outlined text-base">arrow_downward</span>
+            Jump to Endpoint
+          </a>
+          <a href="#languages" class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-container-high text-primary rounded-xl font-semibold text-sm hover:bg-surface-container-highest transition-all active:scale-95">
+            <span class="material-symbols-outlined text-base">language</span>
+            Languages
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Decorative gradient -->
+    <div class="absolute -z-10 top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none"></div>
+  </section>
+
+  <!-- ═══════════════════════════ LAYOUT: SIDEBAR + CONTENT ═══════════════════════════ -->
+  <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-12">
+
+    <!-- Sidebar (desktop only) -->
+    <aside class="hidden lg:block w-56 flex-shrink-0">
+      <div class="sticky top-28 space-y-1">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-3 px-3">On This Page</p>
+        <a href="#overview"   class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all group">
+          <span class="material-symbols-outlined text-base opacity-50 group-hover:opacity-100">info</span> Overview
+        </a>
+        <a href="#endpoint"   class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all group">
+          <span class="material-symbols-outlined text-base opacity-50 group-hover:opacity-100">api</span> Endpoint
+        </a>
+        <a href="#languages"  class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all group">
+          <span class="material-symbols-outlined text-base opacity-50 group-hover:opacity-100">language</span> Languages
+        </a>
+        <a href="#response"   class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all group">
+          <span class="material-symbols-outlined text-base opacity-50 group-hover:opacity-100">data_object</span> Response Schema
+        </a>
+        <a href="#example"    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all group">
+          <span class="material-symbols-outlined text-base opacity-50 group-hover:opacity-100">code</span> Example Response
+        </a>
+        <a href="#errors"     class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all group">
+          <span class="material-symbols-outlined text-base opacity-50 group-hover:opacity-100">error</span> Error Handling
+        </a>
+        <a href="#spellcheck" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all group">
+          <span class="material-symbols-outlined text-base opacity-50 group-hover:opacity-100">spellcheck</span> Spell Correction
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="flex-1 min-w-0 space-y-16">
+
+      <!-- ── OVERVIEW ── -->
+      <section id="overview" class="doc-section slide-up">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">info</span>
+          <h2 class="text-3xl font-headline font-bold tracking-tight">Overview</h2>
+        </div>
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-8">
+          <p class="text-on-surface-variant font-body leading-relaxed mb-6">
+            The OPEN API Dictionary API is a REST API built with FastAPI (Python). It serves structured dictionary data from a local SQLite database, with a built-in AI-powered spell-correction fallback for unrecognised words.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-surface-container-low rounded-xl p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Base URL</p>
+              <code class="text-primary font-mono text-sm">http://localhost:8000</code>
+            </div>
+            <div class="bg-surface-container-low rounded-xl p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Protocol</p>
+              <code class="text-primary font-mono text-sm">HTTP / REST</code>
+            </div>
+            <div class="bg-surface-container-low rounded-xl p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Response Format</p>
+              <code class="text-primary font-mono text-sm">application/json</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ENDPOINT ── -->
+      <section id="endpoint" class="doc-section">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">api</span>
+          <h2 class="text-3xl font-headline font-bold tracking-tight">Endpoint</h2>
+        </div>
+
+        <!-- Main endpoint card -->
+        <div class="bg-inverse-surface rounded-2xl overflow-hidden shadow-xl mb-6">
+          <div class="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="method-pill">GET</span>
+              <code class="text-slate-200 font-mono text-sm">/api/{language}/{word}</code>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">main.py</span>
+          </div>
+          <div class="p-6">
+            <p class="text-slate-400 font-body text-sm mb-5">
+              Retrieve the definition, part of speech, synonyms, and antonyms for a given word in the specified language.
+            </p>
+            <div class="space-y-3">
+              <!-- language param -->
+              <div class="flex flex-col sm:flex-row sm:items-start gap-3 bg-slate-800/40 rounded-xl p-4">
+                <div class="flex-shrink-0">
+                  <span class="inline-block bg-primary/30 text-primary-fixed-dim font-mono text-xs px-2 py-0.5 rounded">PATH</span>
+                </div>
+                <div>
+                  <code class="text-tertiary-fixed-dim font-mono text-sm">{language}</code>
+                  <span class="mx-2 text-slate-600">—</span>
+                  <span class="text-slate-400 text-sm font-body">3-letter ISO 639-2 language code (e.g. <code class="text-indigo-300 font-mono">eng</code>). Must be one of the supported languages below.</span>
+                </div>
+              </div>
+              <!-- word param -->
+              <div class="flex flex-col sm:flex-row sm:items-start gap-3 bg-slate-800/40 rounded-xl p-4">
+                <div class="flex-shrink-0">
+                  <span class="inline-block bg-primary/30 text-primary-fixed-dim font-mono text-xs px-2 py-0.5 rounded">PATH</span>
+                </div>
+                <div>
+                  <code class="text-tertiary-fixed-dim font-mono text-sm">{word}</code>
+                  <span class="mx-2 text-slate-600">—</span>
+                  <span class="text-slate-400 text-sm font-body">The word to look up. Case-insensitive, leading/trailing whitespace is stripped.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional routes -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="method-pill">GET</span>
+              <code class="font-mono text-sm text-primary">/</code>
+            </div>
+            <p class="text-sm text-on-surface-variant font-body">Renders the home page (<code class="font-mono text-xs">home.html</code>) via Jinja2.</p>
+          </div>
+          <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="method-pill">GET</span>
+              <code class="font-mono text-sm text-primary">/docs</code>
+            </div>
+            <p class="text-sm text-on-surface-variant font-body">Renders this documentation page (<code class="font-mono text-xs">docs.html</code>).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── LANGUAGES ── -->
+      <section id="languages" class="doc-section">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">language</span>
+          <h2 class="text-3xl font-headline font-bold tracking-tight">Supported Languages</h2>
+        </div>
+        <p class="text-on-surface-variant font-body text-sm mb-6 ml-9">
+          Only <strong>English</strong> is fully available at this time. The other language tables are not yet populated — they are shown here for reference and will be enabled in future releases.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+
+          <!-- English — available -->
+          <div class="lang-tag available">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">🇬🇧</span>
+              <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border border-green-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>
+                Live
+              </span>
+            </div>
+            <p class="font-headline font-bold text-lg text-on-surface">English</p>
+            <code class="font-mono text-primary text-sm font-semibold">eng</code>
+            <p class="text-xs text-on-surface-variant mt-1.5 font-body">~175,000 headwords</p>
+          </div>
+
+          <!-- French — coming soon -->
+          <div class="lang-tag grayed">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">🇫🇷</span>
+              <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-400 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border border-slate-200">
+                Soon
+              </span>
+            </div>
+            <p class="font-headline font-bold text-lg text-on-surface">French</p>
+            <code class="font-mono text-sm font-semibold">fre</code>
+            <p class="text-xs text-on-surface-variant mt-1.5 font-body">Coming soon</p>
+          </div>
+
+          <!-- Spanish — coming soon -->
+          <div class="lang-tag grayed">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">🇪🇸</span>
+              <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-400 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border border-slate-200">
+                Soon
+              </span>
+            </div>
+            <p class="font-headline font-bold text-lg text-on-surface">Spanish</p>
+            <code class="font-mono text-sm font-semibold">spa</code>
+            <p class="text-xs text-on-surface-variant mt-1.5 font-body">Coming soon</p>
+          </div>
+
+          <!-- Hindi — coming soon -->
+          <div class="lang-tag grayed">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">🇮🇳</span>
+              <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-400 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border border-slate-200">
+                Soon
+              </span>
+            </div>
+            <p class="font-headline font-bold text-lg text-on-surface">Hindi</p>
+            <code class="font-mono text-sm font-semibold">hin</code>
+            <p class="text-xs text-on-surface-variant mt-1.5 font-body">Coming soon</p>
+          </div>
+
+        </div>
+
+        <!-- Unsupported note -->
+        <div class="mt-5 flex gap-3 items-start bg-error-container/40 border border-error/15 rounded-xl p-4">
+          <span class="material-symbols-outlined text-error text-xl flex-shrink-0 mt-0.5">info</span>
+          <p class="text-sm font-body text-on-surface">
+            Requests using a language code not in <code class="font-mono text-xs bg-surface-container px-1.5 py-0.5 rounded">ALLOWED_LANGUAGES</code> will return a <code class="font-mono text-xs bg-surface-container px-1.5 py-0.5 rounded">400</code>-style error with the message <em>"Language '…' is not supported."</em>
+          </p>
+        </div>
+      </section>
+
+      <!-- ── RESPONSE SCHEMA ── -->
+      <section id="response" class="doc-section">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">data_object</span>
+          <h2 class="text-3xl font-headline font-bold tracking-tight">Response Schema</h2>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden">
+          <div class="grid grid-cols-3 bg-surface-container px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/20">
+            <span>Field</span>
+            <span>Type</span>
+            <span>Description</span>
+          </div>
+          <!-- rows -->
+          <div class="divide-y divide-outline-variant/10">
+            <div class="grid grid-cols-3 px-6 py-4 items-start">
+              <code class="font-mono text-sm text-primary">word</code>
+              <span class="text-sm font-body text-on-surface-variant">string</span>
+              <span class="text-sm font-body text-on-surface-variant">The (potentially corrected) word that was looked up.</span>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 items-start">
+              <code class="font-mono text-sm text-primary">results</code>
+              <span class="text-sm font-body text-on-surface-variant">array</span>
+              <span class="text-sm font-body text-on-surface-variant">Array of result objects. Empty array when not found.</span>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 items-start pl-10">
+              <code class="font-mono text-xs text-indigo-400">→ definition</code>
+              <span class="text-sm font-body text-on-surface-variant">string</span>
+              <span class="text-sm font-body text-on-surface-variant">The word's meaning.</span>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 items-start pl-10">
+              <code class="font-mono text-xs text-indigo-400">→ pos</code>
+              <span class="text-sm font-body text-on-surface-variant">string</span>
+              <span class="text-sm font-body text-on-surface-variant">Part of speech (e.g. <code class="font-mono text-xs">n.</code>, <code class="font-mono text-xs">v.</code>, <code class="font-mono text-xs">adj.</code>).</span>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 items-start pl-10">
+              <code class="font-mono text-xs text-indigo-400">→ synonyms</code>
+              <span class="text-sm font-body text-on-surface-variant">string | null</span>
+              <span class="text-sm font-body text-on-surface-variant">Comma-separated synonyms, or <code class="font-mono text-xs">null</code>.</span>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 items-start pl-10">
+              <code class="font-mono text-xs text-indigo-400">→ antonyms</code>
+              <span class="text-sm font-body text-on-surface-variant">string | null</span>
+              <span class="text-sm font-body text-on-surface-variant">Comma-separated antonyms, or <code class="font-mono text-xs">null</code>.</span>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 items-start">
+              <code class="font-mono text-sm text-primary">error</code>
+              <span class="text-sm font-body text-on-surface-variant">string | null</span>
+              <span class="text-sm font-body text-on-surface-variant"><code class="font-mono text-xs">null</code> on success; error message string on failure.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── EXAMPLE RESPONSE ── -->
+      <section id="example" class="doc-section">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">code</span>
+          <h2 class="text-3xl font-headline font-bold tracking-tight">Example Response</h2>
+        </div>
+
+        <p class="text-on-surface-variant font-body mb-6">
+          The following is the response returned for the request:
+        </p>
+
+        <!-- Request pill -->
+        <div class="inline-flex items-center gap-3 bg-surface-container rounded-full px-5 py-2.5 mb-6 border border-outline-variant/30">
+          <span class="method-pill">GET</span>
+          <code class="font-mono text-sm text-primary">/api/eng/example</code>
+        </div>
+
+        <!-- JSON code block -->
+        <div class="bg-inverse-surface rounded-2xl overflow-hidden shadow-2xl">
+          <div class="bg-slate-800/50 px-6 py-3 flex justify-between items-center border-b border-slate-700/50">
+            <div class="flex items-center gap-3">
+              <div class="flex gap-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-red-500/60"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-green-500/60"></div>
+              </div>
+              <span class="text-slate-400 text-xs font-mono">Response · 200 OK · application/json</span>
+            </div>
+            <button id="copy-example-btn" onclick="copyExample()"
+              class="copy-btn flex items-center gap-1.5 text-primary-fixed-dim text-xs font-bold uppercase tracking-widest hover:opacity-70 transition-all px-3 py-1.5 rounded-lg hover:bg-white/5">
+              <span class="material-symbols-outlined text-sm" id="copy-icon">content_copy</span>
+              <span id="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre id="example-block" class="p-8 text-sm font-mono leading-relaxed overflow-x-auto"><code><span class="json-punc">{</span>
+  <span class="json-key">"word"</span><span class="json-punc">:</span> <span class="json-str">"example"</span><span class="json-punc">,</span>
+  <span class="json-key">"results"</span><span class="json-punc">:</span> <span class="json-punc">[</span>
+    <span class="json-punc">{</span>
+      <span class="json-key">"definition"</span><span class="json-punc">:</span> <span class="json-str">"One that is representative of a group as a whole; one serving as a pattern of a specific kind; a person or thing regarded as typical of a class."</span><span class="json-punc">,</span>
+      <span class="json-key">"pos"</span><span class="json-punc">:</span> <span class="json-str">"n."</span><span class="json-punc">,</span>
+      <span class="json-key">"synonyms"</span><span class="json-punc">:</span> <span class="json-str">"illustration, instance, representative, sample, specimen"</span><span class="json-punc">,</span>
+      <span class="json-key">"antonyms"</span><span class="json-punc">:</span> <span class="json-null">null</span>
+    <span class="json-punc">}</span>
+  <span class="json-punc">]</span><span class="json-punc">,</span>
+  <span class="json-key">"error"</span><span class="json-punc">:</span> <span class="json-null">null</span>
+<span class="json-punc">}</span></code></pre>
+        </div>
+
+        <!-- "Computer" example for reference -->
+        <div class="mt-6">
+          <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3">Another example — <code class="font-mono">GET /api/eng/computer</code></p>
+          <div class="bg-inverse-surface rounded-2xl overflow-hidden shadow-lg">
+            <div class="bg-slate-800/50 px-6 py-3 flex justify-between items-center border-b border-slate-700/50">
+              <span class="text-slate-400 text-xs font-mono">Response · 200 OK</span>
+              <button onclick="copyComputer()"
+                class="copy-btn flex items-center gap-1.5 text-primary-fixed-dim text-xs font-bold uppercase tracking-widest hover:opacity-70 transition-all px-3 py-1.5 rounded-lg hover:bg-white/5" id="copy-computer-btn">
+                <span class="material-symbols-outlined text-sm" id="copy-computer-icon">content_copy</span>
+                <span id="copy-computer-label">Copy</span>
+              </button>
+            </div>
+            <pre class="p-8 text-sm font-mono leading-relaxed overflow-x-auto"><code><span class="json-punc">{</span>
+  <span class="json-key">"word"</span><span class="json-punc">:</span> <span class="json-str">"computer"</span><span class="json-punc">,</span>
+  <span class="json-key">"results"</span><span class="json-punc">:</span> <span class="json-punc">[</span>
+    <span class="json-punc">{</span>
+      <span class="json-key">"definition"</span><span class="json-punc">:</span> <span class="json-str">"One who computes."</span><span class="json-punc">,</span>
+      <span class="json-key">"pos"</span><span class="json-punc">:</span> <span class="json-str">"n."</span><span class="json-punc">,</span>
+      <span class="json-key">"synonyms"</span><span class="json-punc">:</span> <span class="json-str">"reckoner, calculator, estimator, figurer, electronic computer"</span><span class="json-punc">,</span>
+      <span class="json-key">"antonyms"</span><span class="json-punc">:</span> <span class="json-null">null</span>
+    <span class="json-punc">}</span>
+  <span class="json-punc">]</span><span class="json-punc">,</span>
+  <span class="json-key">"error"</span><span class="json-punc">:</span> <span class="json-null">null</span>
+<span class="json-punc">}</span></code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ERROR HANDLING ── -->
+      <section id="errors" class="doc-section">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">error</span>
+          <h2 class="text-3xl font-headline font-bold tracking-tight">Error Handling</h2>
+        </div>
+
+        <div class="space-y-4">
+
+          <!-- Word not found -->
+          <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 overflow-hidden">
+            <div class="flex items-center gap-3 bg-surface-container px-6 py-3 border-b border-outline-variant/10">
+              <span class="inline-block bg-amber-100 text-amber-700 font-mono text-xs font-bold px-2 py-0.5 rounded-full">404-like</span>
+              <span class="text-sm font-semibold font-body">Word Not Found</span>
+            </div>
+            <div class="px-6 py-5">
+              <p class="text-sm text-on-surface-variant font-body mb-4">When the word (and spell-corrected variants) are absent from the database, the API returns <code class="font-mono text-xs bg-surface-container px-1.5 py-0.5 rounded">200</code> with an empty results array and a populated <code class="font-mono text-xs">error</code> field.</p>
+              <pre class="bg-inverse-surface rounded-xl p-5 text-xs font-mono leading-relaxed overflow-x-auto"><code><span class="json-punc">{</span>
+  <span class="json-key">"word"</span><span class="json-punc">:</span> <span class="json-str">"zzzyyyxxx"</span><span class="json-punc">,</span>
+  <span class="json-key">"results"</span><span class="json-punc">:</span> <span class="json-punc">[]</span><span class="json-punc">,</span>
+  <span class="json-key">"error"</span><span class="json-punc">:</span> <span class="json-str">"Word not found in the eng dictionary."</span>
+<span class="json-punc">}</span></code></pre>
+            </div>
+          </div>
+
+          <!-- Unsupported language -->
+          <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 overflow-hidden">
+            <div class="flex items-center gap-3 bg-surface-container px-6 py-3 border-b border-outline-variant/10">
+              <span class="inline-block bg-red-100 text-red-700 font-mono text-xs font-bold px-2 py-0.5 rounded-full">400-like</span>
+              <span class="text-sm font-semibold font-body">Unsupported Language</span>
+            </div>
+            <div class="px-6 py-5">
+              <p class="text-sm text-on-surface-variant font-body mb-4">When the language code is not in <code class="font-mono text-xs bg-surface-container px-1.5 py-0.5 rounded">ALLOWED_LANGUAGES</code>.</p>
+              <pre class="bg-inverse-surface rounded-xl p-5 text-xs font-mono leading-relaxed overflow-x-auto"><code><span class="json-punc">{</span>
+  <span class="json-key">"word"</span><span class="json-punc">:</span> <span class="json-str">"hello"</span><span class="json-punc">,</span>
+  <span class="json-key">"results"</span><span class="json-punc">:</span> <span class="json-punc">[]</span><span class="json-punc">,</span>
+  <span class="json-key">"error"</span><span class="json-punc">:</span> <span class="json-str">"Language 'deu' is not supported."</span>
+<span class="json-punc">}</span></code></pre>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── SPELL CORRECTION ── -->
+      <section id="spellcheck" class="doc-section">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">spellcheck</span>
+          <h2 class="text-3xl font-headline font-bold tracking-tight">Spell Correction</h2>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-8">
+          <p class="text-on-surface-variant font-body leading-relaxed mb-6">
+            When a word is not found in the database, the API automatically attempts to correct the spelling before returning a "not found" error. This is a two-step process:
+          </p>
+          <div class="space-y-4">
+            <div class="flex gap-4 items-start">
+              <div class="w-8 h-8 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-sm">1</div>
+              <div>
+                <p class="font-semibold font-body text-on-surface mb-1">Fast local correction</p>
+                <p class="text-sm text-on-surface-variant font-body">Uses Python's <code class="font-mono text-xs bg-surface-container px-1.5 py-0.5 rounded">difflib.get_close_matches</code> against the full in-memory word set (≈175k entries for English) with a similarity cutoff of <code class="font-mono text-xs">0.7</code>.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div class="w-8 h-8 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-sm">2</div>
+              <div>
+                <p class="font-semibold font-body text-on-surface mb-1">LLM fallback</p>
+                <p class="text-sm text-on-surface-variant font-body">If local correction finds no match, the query is sent to <strong>Google Gemini 1.5 Flash</strong> via LangChain (<code class="font-mono text-xs bg-surface-container px-1.5 py-0.5 rounded">ai.py</code>) and asked to return the single most likely intended dictionary word.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 flex gap-3 items-start bg-primary/5 border border-primary/15 rounded-xl p-4">
+            <span class="material-symbols-outlined text-primary text-xl flex-shrink-0 mt-0.5">lightbulb</span>
+            <p class="text-sm font-body text-on-surface">
+              The <code class="font-mono text-xs bg-surface-container px-1.5 py-0.5 rounded">word</code> field in the response will reflect the corrected spelling when a correction was applied, so your client can inform users of the substitution.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /main content -->
+  </div><!-- /layout -->
+
+</main>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer id="footer" class="bg-slate-50 w-full py-12 px-6 border-t border-slate-200">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="space-y-4">
+      <a href="/" class="block text-lg font-bold text-slate-900 font-headline hover:opacity-70 transition-opacity">
+        OPEN API
+      </a>
+      <p class="font-['Inter'] text-xs text-slate-500 max-w-xs">
+        Precision Language Data for the modern web. Empowering developers with world-class linguistic tools.
+      </p>
+      <div class="font-['Inter'] text-xs text-slate-500 pt-4">© 2026 OPEN API.</div>
+    </div>
+    <div class="grid grid-cols-2 gap-8 md:justify-items-end">
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-900">Product</h4>
+        <nav class="flex flex-col space-y-2">
+          <a href="/docs"
+            class="text-left text-indigo-600 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all font-semibold">Documentation</a>
+          <a href="/#cta"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Pricing</a>
+          <button onclick="showToast('✅ All systems operational')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Status</button>
+        </nav>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-900">Company</h4>
+        <nav class="flex flex-col space-y-2">
+          <a href="https://github.com/Robotics-now/Dictionary_api"
+             target="_blank" rel="noopener noreferrer"
+             class="star-btn mt-1" id="footer-star-btn" style="font-size:0.72rem; padding:0.35rem 0.75rem;">
+            <span class="material-symbols-outlined star-icon" style="font-variation-settings:'FILL' 1; font-size:0.9rem;">star</span>
+            <span>Star on GitHub</span>
+            <svg height="13" viewBox="0 0 16 16" fill="currentColor" class="opacity-60"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <button onclick="showToast('🔒 Privacy policy coming soon')"
+            class="text-left text-slate-500 hover:text-indigo-500 font-['Inter'] text-xs hover:underline transition-all">Privacy</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Credits Bar -->
+  <div class="max-w-7xl mx-auto mt-10 pt-8 border-t border-slate-200">
+    <p class="text-xs text-slate-400 text-center mb-5 font-medium uppercase tracking-widest">Built by</p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+
+      <!-- Backend -->
+      <a href="https://github.com/Robotics-now" target="_blank" rel="noopener noreferrer"
+        class="team-card group flex items-center gap-3 px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+        <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center flex-shrink-0">
+          <svg height="16" viewBox="0 0 16 16" fill="white"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </div>
+        <div class="text-left">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none mb-0.5">Backend</p>
+          <p class="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors font-['Space_Grotesk']">Robotics-now / Aditya Raj</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-300 group-hover:text-indigo-400 transition-colors text-base ml-1">open_in_new</span>
+      </a>
+
+      <span class="text-slate-300 text-lg hidden sm:block">×</span>
+
+      <!-- Frontend -->
+      <a href="https://github.com/prajasus2308" target="_blank" rel="noopener noreferrer"
+        class="team-card group flex items-center gap-3 px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+          <svg height="16" viewBox="0 0 16 16" fill="white"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </div>
+        <div class="text-left">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none mb-0.5">Frontend {the design} · Pratyush Raj</p>
+          <p class="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors font-['Space_Grotesk']">prajasus2308</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-300 group-hover:text-indigo-400 transition-colors text-base ml-1">open_in_new</span>
+      </a>
+
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════ JAVASCRIPT ═══════════════════════════ -->
+<script>
+  /* ── Toast ── */
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  /* ── Mobile menu ── */
+  function toggleMobileMenu() {
+    const open = document.getElementById('mobile-menu').classList.toggle('open');
+    document.getElementById('menu-icon').textContent = open ? 'close' : 'menu';
+  }
+  function closeMobileMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('menu-icon').textContent = 'menu';
+  }
+
+  /* ── Back to top visibility ── */
+  window.addEventListener('scroll', () => {
+    document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  /* ── Copy example JSON ── */
+  const EXAMPLE_JSON = `{
+  "word": "example",
+  "results": [
+    {
+      "definition": "One that is representative of a group as a whole; one serving as a pattern of a specific kind; a person or thing regarded as typical of a class.",
+      "pos": "n.",
+      "synonyms": "illustration, instance, representative, sample, specimen",
+      "antonyms": null
+    }
+  ],
+  "error": null
+}`;
+
+  const COMPUTER_JSON = `{
+  "word": "computer",
+  "results": [
+    {
+      "definition": "One who computes.",
+      "pos": "n.",
+      "synonyms": "reckoner, calculator, estimator, figurer, electronic computer",
+      "antonyms": null
+    }
+  ],
+  "error": null
+}`;
+
+  function copyWithFeedback(text, btnId, iconId, labelId) {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn  = document.getElementById(btnId);
+      const icon = document.getElementById(iconId);
+      const lbl  = document.getElementById(labelId);
+      btn.classList.add('copied');
+      if (icon) icon.textContent = 'check';
+      if (lbl)  lbl.textContent  = 'Copied!';
+      showToast('⧉ Copied to clipboard!');
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        if (icon) icon.textContent = 'content_copy';
+        if (lbl)  lbl.textContent  = 'Copy';
+      }, 2000);
+    }).catch(() => showToast('⚠️ Copy failed'));
+  }
+
+  function copyExample()  { copyWithFeedback(EXAMPLE_JSON,  'copy-example-btn',  'copy-icon',         'copy-label'); }
+  function copyComputer() { copyWithFeedback(COMPUTER_JSON, 'copy-computer-btn', 'copy-computer-icon','copy-computer-label'); }
+
+  /* ── Restore starred state ── */
+  if (localStorage.getItem('oa_starred')) {
+    const label = document.getElementById('nav-star-label');
+    if (label) label.textContent = '⭐ Starred!';
+    const btn = document.getElementById('nav-star-btn');
+    if (btn) btn.classList.add('starred');
+  }
+</script>
+</body>
+</html>

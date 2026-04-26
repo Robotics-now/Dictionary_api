@@ -3,7 +3,6 @@ uvicorn[standard]==0.46.0
 
 Jinja2==3.1.5
 
-langchain==0.3.15
 langchain-google-genai==4.2.2
 
 python-multipart==0.0.20

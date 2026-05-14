@@ -3,7 +3,7 @@
 ## License
 
 > **Source-Available · Limited Use License**
-> Copyright © 2026 Aditya Raj
+> Copyright © 2026 Aditya Raj and Pratyush Raj
 
 This license governs use of the software and associated documentation files (the "Software") in this repository. The Software is provided for educational and personal review purposes only.
 

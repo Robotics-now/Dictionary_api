@@ -20,7 +20,11 @@
 
 ---
 
+
+
 ## 🚀 Getting Started
+We suggest that you visit the <a href="https://www.roboticsnow.dpdns.org">`website`</a>.
+
 
 <details>
 <summary><b>Step 1 — Get your free API key</b></summary>
@@ -28,7 +32,7 @@
 
 Visit **`/client`** and fill in your name and email. Your key arrives in your inbox within seconds.
 
-> **Your key looks like this:** `oa_f360fb6fe04b1be5b109e9`
+> **Your key looks like this:** `oa_f360fb6fe00b1be5b109e9`
 >
 > 25 characters · always starts with `oa_` · one per email · always free.
 
@@ -50,7 +54,7 @@ curl https://yourhost/api/oa_f367fb6fe04b1be5b129e9/eng/eloquent
 
 ---
 
-## 📖 Response Format
+## Response Format
 
 ```json
 {
@@ -73,7 +77,7 @@ curl https://yourhost/api/oa_f367fb6fe04b1be5b129e9/eng/eloquent
 
 ---
 
-## ✏️ Spell Correction
+## Spell Correction
 
 Misspelled a word? The API detects it automatically and returns the closest match. The corrected spelling appears in the `"word"` field so you always know what was looked up.
 
@@ -109,27 +113,25 @@ graph TD
 ```
 ---
 
-## 📡 Endpoints
+## Endpoints
 
-| Method | Route | What it does |
-|:------:|-------|-------------|
-| `GET` | `/api/{key}/eng/{word}` | Look up a word |
-| `POST` | `/generate-key` | Get a new API key |
-| `POST` | `/lookup-key` | Check who a key belongs to |
-| `POST` | `/feedback` | Send feedback |
+ `GET`  `/api/{key}/eng/{word}`  
+ 
+ This gives you the same json data as listed above.
 
 ---
 
-## ⚠️ Errors
+## Errors
 
-| Status | Symbol | Meaning | Fix |
-|:------:|:------:|---------|-----|
-| `401` | 🔒 | Invalid API key | Copy your key exactly from the email |
-| `500` | 💥 | Server error | Try again or contact us |
+| Status | Meaning | Fix |
+|:------:|---------|-----|
+| `401` | Invalid API key | Copy your key exactly from the email |
+| `500` | Server error | Try again or contact us |
+| `404` | Page not found | Use the default redirect |
 
 ---
 
-## 🔑 Key Management
+## Key Management
 
 <details>
 <summary><b>Lost your key?</b></summary>

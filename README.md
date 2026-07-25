@@ -11,7 +11,7 @@
 <br/>
 
 **Definitions · Synonyms · Antonyms · Part of Speech — in one free API call.**
-Not currently on a server expected to be live by June 30
+Not currently on a server expected to be live by July 30
 
 <br/>
 

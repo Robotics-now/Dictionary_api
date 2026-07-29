@@ -11,7 +11,6 @@
 <br/>
 
 **Definitions · Synonyms · Antonyms · Part of Speech — in one free API call.**
-Not currently on a server expected to be live by July 30
 
 <br/>
 
@@ -22,7 +21,7 @@ Not currently on a server expected to be live by July 30
 ---
 
 
-The readme has been moved to the the <a href="https://github.com/Robotics-now/Dictionary_api/wiki">wiki</a> plese visit it or the oficial website.
+The readme has been moved to the the <a href="https://github.com/Robotics-now/Dictionary_api/wiki">wiki</a> plese visit it or our oficial [landing site](https://api.roboticsnow.dpdns.org/).
 
 
 ## License

@@ -21,7 +21,7 @@
 ---
 
 
-The readme has been moved to the the <a href="https://github.com/Robotics-now/Dictionary_api/wiki">wiki</a> plese visit it or our oficial [landing site](https://api.roboticsnow.dpdns.org/).
+**The readme has been moved to the the <a href="https://github.com/Robotics-now/Dictionary_api/wiki">wiki</a> plese visit it or our oficial [landing site](https://api.roboticsnow.dpdns.org/).**
 
 
 ## License
